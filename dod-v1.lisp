@@ -1,3 +1,5 @@
+;This game is NOT finished yet!
+
 (defparameter *num-players* 2)
 (defparameter *max-dice* 3)
 (defparameter *board-size* 2)
