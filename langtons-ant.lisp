@@ -4,30 +4,28 @@
 
 (defun check-black(x y blacklist)
   (cond ((equal x (car blacklist))
-	 (progn (cond ((equal y (cadr blacklist))
-		       't)
-		      (t
-		       (check-black x y (cddr blacklist))))))
+	 (cond ((equal y (cadr blacklist))
+		't)
+	       (t
+		(check-black x y (cddr blacklist)))))
 	((equal nil (car blacklist))
 	 'nil)
 	(t
 	 (check-black x y (cddr blacklist)))))
 
-;does not replace *black-spaces* with the new list!
 (defun remove-black(x y blacklist)
   (cond ((equal x (car blacklist))
-	 (progn (cond ((equal y (cadr blacklist))
-		       (progn (setf *black-spaces*
-				    (remove y
-					    (remove x *black-spaces* :start *index* :end (+ *index* 1))
-					    :start *index* :end (+ *index* 1)))
-			      (setf *index* 0)))
-		      (t
-		       (progn (setf *index* (+ *index* 2))
-			      (check-black x y (cddr blacklist)))))))
+	 (if (equal y (cadr blacklist))
+	     (progn (setf *black-spaces*
+		   (remove y
+			   (remove x *black-spaces* :start *index* :end (+ *index* 1))
+			   :start *index* :end (+ *index* 1)))
+		    (setf *index* 0))
+	     (progn (setf *index* (+ *index* 2))
+		    (remove-black x y (cddr blacklist)))))
 	(t
 	 (progn (setf *index* (+ *index* 2))
-		(check-black x y (cddr blacklist))))))
+		(remove-black x y (cddr blacklist))))))
 
 (defun add-black(x y)
   (push y *black-spaces*)
@@ -67,9 +65,9 @@
 			       (move (- x 1) y 'left))))))
       'done))
 
+;this blows up
 (defun start(x y b-or-w direction number-of-steps)
   (setf *steps* number-of-steps)
   (if (eq 'b b-or-w)
       (add-black x y)
-      (move x y direction))
-  (move x y direction))
+      (move x y direction)))
