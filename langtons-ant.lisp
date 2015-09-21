@@ -97,6 +97,7 @@
 ;;enter the number of steps you'd like the ant to make
 (defun start(x y b-or-w direction number-of-steps)
   (setf *steps* number-of-steps)
+  (setf *black-spaces* '()) ;just in case you run this after you ran it before
   (if (eq 'b b-or-w)
       (add-black x y)
       (move x y direction)))
