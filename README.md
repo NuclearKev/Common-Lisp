@@ -3,11 +3,17 @@
 Some of the programs in this repo are not originally written by me. The following were games (or programs) that we taught in the amazing book The Land of Lisp:
 
 attack-of-the-robots.lisp
+
 dod-v1.lisp
+
 evolution.lisp
+
 graph-util.lisp
+
 orc-battle.lisp
+
 wizard-adventure.lisp
+
 wumpus.lisp
 
 Also, those programs should be ran using CLISP. Although it only matters with wumpus.lisp, they were written for CLISP and you may run into problems if you don't use it.
