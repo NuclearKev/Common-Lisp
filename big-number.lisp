@@ -46,7 +46,7 @@
 
 ;;compares the lengths of the lists and calls compare-digits if they are of
 ;;equal length
-(defun compare-lengths(x y)
+(defun compare(x y)
   (cond ((> (length x) (length y))
 	 'nil)
 	((< (length x) (length y))
@@ -76,7 +76,7 @@
 ;;actually does the multiplication, *will be explained more*
 (defun multiply-loop(x y n i)
   (if (= n (- (length x) (- (length y) 1)))
-      'done
+      't
       (progn (if (= 1 (length y))
 		 (setf *result* (cons (* (nth n x) (nth i y)) *result*))
 		 (setf *result* (cons 
@@ -92,6 +92,10 @@
   (multiply-loop x y 0 (- (length y) 1))
   (setf *result* (reverse (digit-correct *result* 0))))
 
-;;soon to be factorial looping function
-(defun factorial(x y n)
-  )
+;;computes the factorial of the number x (in list form)
+(defun factorial(x y z)
+  (if (compare x y)
+      'done
+      (progn (setf z (multiply z y))
+	     (princ z)
+	     (factorial x (increment y)  z))))
