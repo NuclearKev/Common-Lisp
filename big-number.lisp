@@ -3,10 +3,10 @@
 ;;This program will take the factorial of any number you give it.
 ;;It stores each digit of the number in a list so that you can deal with huge numbers.
 ;;This program is rather SLOW, so it can take a while for it to compute the result
-;;In the comments, I use the terms MSD and LSD, which mean, Most Significant Digit and
+;;In the comments, I use the terms MSD and LSD, which means, Most Significant Digit and
 ;;Least Significant Digit.
 
-;;BUG: You will have a vary hard time dealing with factorials above 25.
+;;BUG: You will have a very hard time dealing with factorials above 25.
 ;;The fix is in the works.
 
 (defparameter *result* '()) ;this will be phased out soon enough
