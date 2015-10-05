@@ -8,12 +8,13 @@
 ;;put the values found in the *black-spaces* list into
 ;;a spreadsheet or calculator and see what you get.
 
-;;Please note that within the *black-spaces* list there
-;;will be a bunch of numbers that *don't* look like
-;;coordinates. This is normal, each pair of numbers
-;;starting from the beginning are coordinates.
-;;For example '(0 0 1 2 3 4), (0,0) is a coordinate of
-;;a black space; so if (1,2) and (3,4). Enjoy.
+;;I've updated this to use complex coordinates for the location of the ant.
+;;This makes everything more efficient and easier to understand. Enjoy.
+;;Also note if you see a value in the *black-spaces* list that is
+;;just a single number, this means the imaginary part is zero, or
+;; in other words, y = 0.
+;;For exmaple: *black-list* = '(#C(1 1) #C(2 3) 3), this means we have
+;;3 points, (1,1), (2,3), and (3, 0). Enjoy.
 
 (defparameter *black-spaces* '()) ;contains all blacked coordinates
 (defparameter *steps* nil) 
@@ -24,32 +25,17 @@
 ;;back, but without the first ordered pair (cddr blacklist).
 ;;if it is equal to x, then check for y, if not send the
 ;;list minus that ordered pair. If yes, pass true!
-(defun check-black(x y blacklist)
-  (cond ((equal x (car blacklist))
-	 (cond ((equal y (cadr blacklist))
-		't)
-	       (t
-		(check-black x y (cddr blacklist)))))
-	((equal nil (car blacklist))
-	 'nil)
-	(t
-	 (check-black x y (cddr blacklist)))))
+(defun check-black(l blacklist)
+  (when (member l blacklist)
+    'nil
+    't))
 
 ;;basically the check-black function but keeps track of the index
 ;;this makes it easy to remove coordinates
-(defun remove-black(x y blacklist)
-  (cond ((equal x (car blacklist))
-	 (if (equal y (cadr blacklist))
-	     (progn (setf *black-spaces*
-		   (remove y
-			   (remove x *black-spaces* :start *index* :end (+ *index* 1))
-			   :start *index* :end (+ *index* 1)))
-		    (setf *index* 0))
-	     (progn (setf *index* (+ *index* 2))
-		    (remove-black x y (cddr blacklist)))))
-	(t
-	 (progn (setf *index* (+ *index* 2))
-		(remove-black x y (cddr blacklist))))))
+(defun remove-black(l blacklist)
+  (if (check-black l blacklist)
+      (remove l blacklist)
+      blacklist))
 
 (defun add-black(x y)
   (push y *black-spaces*)
@@ -57,9 +43,9 @@
 
 ;;made keeping track of the steps easier
 (defun steps()
-  (if (equal *steps* 0)
-      'nil
-      't))
+  (when (equal *steps* 0)
+    'nil
+    't))
 
 ;;moving logic, the power of cond!
 (defun move(x y direction)
