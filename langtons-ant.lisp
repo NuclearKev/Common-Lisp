@@ -17,7 +17,9 @@
 ;;3 points, (1,1), (2,3), and (3, 0). Enjoy.
 
 (defparameter *black-spaces* '()) ;contains all blacked coordinates
-(defparameter *steps* nil) 
+(defparameter *steps* nil)
+;;in order to make the move function smaller I needed to make this global
+(defparameter *direction* nil) 
 
 ;;Checks to see if the current position is a black one
 (defun check-black(l)
@@ -25,9 +27,13 @@
     'nil
     't))
 
-;;The sole purpose of this is to make the code more readable
+;;The sole purpose of this function is to make the code more readable
 (defun add-black(l)
   (push l *black-spaces*))
+
+;;The sole purpose of this function is to make the code more readable
+(defun remove-black(l)
+   (setf *black-spaces* (remove l *black-spaces*)))
 
 ;;Made keeping track of the steps easier
 (defun steps()
@@ -35,36 +41,43 @@
       'nil
       't))
 
-;;Movement logic function
-;;Very messy, working on making it look better!
-(defun move(l direction)
-  (setf *steps* (- *steps* 1))
-  (if (steps)
-      (cond ((eq direction 'up)
-	     (if (check-black l) 
-		 (progn (setf *black-spaces* (remove l *black-spaces*)) ;black
-			(move (- l 1) 'left))
-		 (progn (add-black l) ;white
-			(move (+ l 1) 'right))))
-	    ((eq direction 'right)
-	     (if (check-black l) 
-		 (progn (setf *black-spaces* (remove l *black-spaces*)) ;black
-			(move (+ l #C(0 1)) 'up))
-		 (progn (add-black l) ;white
-			(move (- l #C(0 1)) 'down))))
-	    ((eq direction 'left)
-	     (if (check-black l)
-		 (progn (setf *black-spaces* (remove l *black-spaces*)) ;black
-			(move (- l #C(0 1)) 'down))
-		 (progn (add-black l) ;white
-			(move (+ l #C(0 1)) 'up))))
-	    ((eq direction 'down)
-	     (if (check-black l)
-		 (progn (setf *black-spaces* (remove l *black-spaces*)) ;black
-			(move (+ l 1) 'right))
-		 (progn (add-black l)
-			(move (- l 1) 'left)))))
-      'done))
+;;When on a black space, sets new direction and new space
+(defun black-move(l)
+  (remove-black l)
+  (case *direction*
+    ((up)    (setf *direction* 'left)
+             (- l 1))
+    ((down)  (setf *direction* 'right)
+             (+ l 1))
+    ((right) (setf *direction* 'up)
+             (+ l #C(0 1)))
+    ((left)  (setf *direction* 'down)
+             (- l #C(0 1)))))
+
+;;When on a white space, sets new direction and new space
+(defun white-move(l)
+  (add-black l)
+  (case *direction*
+    ((up)    (setf *direction* 'right)
+             (+ l 1))
+    ((down)  (setf *direction* 'left)
+             (- l 1))
+    ((right) (setf *direction* 'down)
+             (- l #C(0 1)))
+    ((left)  (setf *direction* 'up)
+             (+ l #C(0 1)))))
+
+;;Main movement function
+;;Checks to see if the space is black, and chooses which function to call
+;;Then passes the new postion back into itself
+(defun move(l)
+  (let ((is-black (check-black l)))
+    (setf *steps* (- *steps* 1))
+    (if (steps)
+	(if is-black
+	    (move (black-move l))
+	    (move (white-move l)))
+	'done)))
 
 ;;enter the x and y coordinates you'd like to start at
 ;;enter 'b for black, 'w for white (or anything but 'b)
@@ -74,8 +87,9 @@
   (let ((c (complex x y)))
     (setf *steps* number-of-steps)
     (setf *black-spaces* '()) ;just in case you run this after you ran it before
+    (setf *direction* direction)
     (if (eq 'b b-or-w)
 	(progn (add-black c)
-	       (move c direction))
-	(move c direction))))
+	       (move c))
+	(move c))))
 
