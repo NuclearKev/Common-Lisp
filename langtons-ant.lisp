@@ -4,9 +4,7 @@
 ;;the GPLv3 and above.
 
 ;;This program is a simulation of the class mathematical
-;;idea of Langton's Ant. There is not GUI, but you can
-;;put the values found in the *black-spaces* list into
-;;a spreadsheet or calculator and see what you get.
+;;idea of Langton's Ant. There is now support for Gnuplot in the works!
 
 ;;I've updated this to use complex coordinates for the location of the ant.
 ;;This makes everything more efficient and easier to understand. Enjoy.
@@ -15,6 +13,8 @@
 ;; in other words, y = 0.
 ;;For exmaple: *black-list* = '(#C(1 1) #C(2 3) 3), this means we have
 ;;3 points, (1,1), (2,3), and (3, 0). Enjoy.
+
+(load "/Users/kevin/Desktop/Developing/lisp/gnuplot-out.lisp")
 
 (defparameter *black-spaces* '()) ;contains all blacked coordinates
 (defparameter *steps* nil)
@@ -93,3 +93,17 @@
 	       (move c))
 	(move c))))
 
+;;You want to pass *black-spaces* to this.
+;;The reason this takes an argument is because you chop *black-spaces* up and
+;;you don't want to destroy *black-spaces*.
+;;The "write-to-file" function is found in the gnuplot-out.lisp program
+;;Please note: You *must* run (new-file "foo.out") before running this function.
+(defun graph-lang(blacklist)
+  (if (null blacklist)
+      'all-done
+      (let ((c (car blacklist)))
+	(let ((x (realpart c))
+	      (y (imagpart c)))
+	  (write-to-file "langton.out" x y)
+	  (graph (cdr blacklist))))))
+      
