@@ -14,7 +14,7 @@
 ;;For exmaple: *black-list* = '(#C(1 1) #C(2 3) 3), this means we have
 ;;3 points, (1,1), (2,3), and (3, 0). Enjoy.
 
-(load "/Users/kevin/Desktop/Developing/lisp/gnuplot-out.lisp")
+(load "/home/kevin/Downloads/Common-Lisp-master/gnuplot-out.lisp")
 
 (defparameter *black-spaces* '()) ;contains all blacked coordinates
 (defparameter *steps* nil)
@@ -99,11 +99,12 @@
 ;;The "write-to-file" function is found in the gnuplot-out.lisp program
 ;;Please note: You *must* run (new-file "foo.out") before running this function.
 (defun graph-lang(blacklist)
+  (new-file "langton.out")
   (if (null blacklist)
       'all-done
       (let ((c (car blacklist)))
 	(let ((x (realpart c))
 	      (y (imagpart c)))
 	  (write-to-file "langton.out" x y)
-	  (graph (cdr blacklist))))))
+	  (graph-lang (cdr blacklist))))))
       
