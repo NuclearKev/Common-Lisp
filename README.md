@@ -22,4 +22,4 @@ langtons-ant.lisp is a simulation of Langton's Ant, a mathematical concept where
 
 gnuplot-out.lisp is a simple program that will print an ordered pair into a file. This program is meant to be ran in a recursive function within the main program. For example: you put a bunch of points in a list, then call this function ordered pair by ordered pair.
 
-big-number.lisp is a program that will do huge factorials (like 1000!). It uses a weird multiplication method that requires all the values to be in lists. Luckily, it is written in LISP, the best listing language! It does not work entirely yet. However, you can go up to ~25! and get all the values. After that, it starts to loop forever. 
+big-number.lisp is a program that will do huge factorials (like 1000!). It uses a weird multiplication method that requires all the values to be in lists. Luckily, it is written in LISP, the best listing language! You can go up to 3000! and it takes about 14 minutes. I was too impatient to try anything bigger.
