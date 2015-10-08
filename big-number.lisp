@@ -41,8 +41,7 @@
 ;;For example, 123 -> '(1 2 3)
 (defun convert-to-list(x temp-list)
   (if (> x 0)
-      (progn (setf temp-list (cons (mod x 10) temp-list)) ;passes them in 1 LSD at a time
-	     (convert-to-list (floor x 10) temp-list)) ;cuts off the current LSD, loops again
+      (convert-to-list (floor x 10) (cons (mod x 10) temp-list))
       temp-list))
 
 ;;Used to increment one of the numbers
@@ -79,10 +78,10 @@
 ;;The number of zeros added: (length y) - 1
 (defun pad-with-zeros(x n)
   (if (> n 0)
-      (progn (setf x (cons 0 x))
-	     (setf x (cons 0 (reverse x)))
+      (progn (push 0 x)
 	     (setf x (reverse x))
-	     (pad-with-zeros x (- n 1)))
+	     (push 0 x)
+	     (pad-with-zeros (reverse x) (- n 1)))
       x))
 
 ;;Removes the added zeros so we have the original list back
@@ -90,8 +89,7 @@
     (if (> n 0)
       (progn (setf x (cdr x))
 	     (setf x (cdr (reverse x)))
-	     (setf x (reverse x))
-	     (remove-zeros x (- n 1)))
+	     (remove-zeros (reverse x) (- n 1)))
       x))
 
 ;;Actually does the multiplication.
@@ -143,17 +141,14 @@
 (defun multiply(x y)
   (setf *result* '())
   (setf x (pad-with-zeros x (- (length y) 1)))
-  (setf y (reverse y))
-  (multiply-loop x y 0 (- (length y) 1))
+  (multiply-loop x (reverse y) 0 (- (length y) 1))
   (setf *result* (reverse (digit-correct *result* 0))))
 
 ;;computes the factorial of the number x (in list form)
 (defun factorial(x y z)
   (if (compare x y)
       z
-      (progn (setf z (multiply z y))
-	     (factorial x (increment y)  z))))
+      (factorial x (increment y)  (multiply z y))))
 
 (defun take-factorial(f)
-  (setf f (convert-to-list f '()))
-  (factorial f '(2) '(1)))
+  (factorial (convert-to-list f '()) '(2) '(1)))
