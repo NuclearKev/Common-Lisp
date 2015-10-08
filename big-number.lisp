@@ -6,10 +6,10 @@
 ;;In the comments, I use the terms MSD and LSD, which means, Most Significant 
 ;;Digit and Least Significant Digit.
 
-;;BUG: You can go up to 99 perfectly, however, after that you will have zeros in
-;;the beginning of the result list.
+;;There still may be a few changes that I'll add to make this more Lispy, but
+;;for now, try doing 5000!; it has ~17000 digits in it and is awesome!
 
-(defparameter *result* '()) ;this will be phased out soon enough
+(defparameter *result* '()) ;makes life easier
 
 (defun digit-correct-middle-of-list(y n)
   (setf (nth (+ n 1) y) (+ (nth (+ n 1) y) (floor (nth n y) 10))) ;takes the MSD
@@ -123,20 +123,20 @@
 ;;fixed. This is why it's backwards (because digit-correct needs them backwards)
 ;;You then have '(5 3 5 5) in *result*, it gets reversed to have '(5 5 3 5) YAY!
 
-;; (defun multiply-more-digits(x y n i temp-buffer)
-;;   (if (equal i (length y))
-;;       temp-buffer
-;;       (multiply-more-digits x y (+ 1 n) (+ 1 i) 
-;; 			    (+ temp-buffer (* (nth n x) (nth (- i 1) y))))))
+;;This function multiplies the current digits in position 'n' and adds them into
+;;the temp-buffer, which is then returned back to multiply-loop
+(defun multiply-digits(x y n i temp-buffer)
+  (if (equal i (length y))
+      temp-buffer
+      (multiply-digits x y (+ 1 n) (+ 1 i) 
+			    (+ temp-buffer (* (nth n x) (nth i y))))))
 
+;;This function basically conses the result list with the output from the
+;;multiply-digits function, then calls itself with a new position (n)
 (defun multiply-loop(x y n i)
   (if (equal n (- (length x) (- (length y) 1)))
       't
-      (progn (if (equal 1 (length y))
-		 (setf *result* (cons (* (nth n x) (nth i y)) *result*))
-		 (setf *result* (cons 
-		  (+ (* (nth n x) (nth (- i 1) y)) (* (nth (+ 1 n) x) (nth i y)))
-		  *result*)))
+      (progn (setf *result* (cons (multiply-digits x y n 0 0) *result*))
 	     (multiply-loop x y (+ 1 n) i))))
 
 ;;must be called before the multiply-loop function (this is a setup function) 
