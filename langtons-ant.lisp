@@ -15,7 +15,7 @@
 ;;3 points, (1,1), (2,3), and (3, 0). Enjoy.
 
 ;;You'd want to change this to where ever your gnuplot-out.lisp is
-(load "/home/kevin/Downloads/Common-Lisp-master/gnuplot-out.lisp")
+(load "/home/kevin/development/lisp/Common-Lisp/gnuplot-out.lisp")
 
 (defparameter *black-spaces* '()) ;contains all blacked coordinates
 (defparameter *steps* nil)

@@ -1,33 +1,41 @@
 ;;This program is Free Software under the GNU GPLv3.0 and above
 
 ;;This program will take the factorial of any number you give it.
-;;It stores each digit of the number in a list so that you can deal with huge numbers.
-;;This program is rather SLOW, so it can take a while for it to compute the result
-;;In the comments, I use the terms MSD and LSD, which means, Most Significant Digit and
-;;Least Significant Digit.
+;;It stores each digit of the number in a list so that you can deal with huge
+;;numbers. 
+;;In the comments, I use the terms MSD and LSD, which means, Most Significant 
+;;Digit and Least Significant Digit.
 
-;;BUG: You will have a very hard time dealing with factorials above 25.
-;;The fix is in the works.
+;;BUG: You can go up to 99 perfectly, however, after that you will have zeros in
+;;the beginning of the result list.
 
 (defparameter *result* '()) ;this will be phased out soon enough
+
+(defun digit-correct-middle-of-list(y n)
+  (setf (nth (+ n 1) y) (+ (nth (+ n 1) y) (floor (nth n y) 10))) ;takes the MSD
+  (setf (nth n y) (mod (nth n y) 10)) ;takes the LSD
+  y)
+
+(defun digit-correct-end-of-list(y n)
+  (setf y (cons (floor (nth n y) 10) (reverse y))) ;takes MSD
+  (setf y (reverse y))
+  (setf (nth n y) (mod (nth n y) 10)) ;takes LSD
+  y)
+
+(defun correction-main(y n)
+  (if (< 9 (nth n y))
+      (if (< (+ 1 n) (length y))
+	  (setf y (digit-correct-middle-of-list y n))
+	  (setf y (digit-correct-end-of-list y n)))
+      y))
+
 
 ;;Corrects digits if it is greater than 10.
 ;;This keeps it so that each element is 1 digit.
 (defun digit-correct(y n)
-  (if (= n (length y))
-      (setf y y)
-      (progn (if (< 9 (nth n y))
-		 (if (< (+ 1 n) (length y))
-		     (progn (setf (nth (+ n 1) y) 
-				  (+ (nth (+ n 1) y) (floor (nth n y) 10))) ;takes the MSD
-			    (setf (nth n y) (mod (nth n y) 10)) ;takes the LSD
-			    (setf y y))
-		     (progn (setf y (cons (floor (nth n y) 10) (reverse y))) ;takes MSD
-			    (setf y (reverse y))
-			    (setf (nth n y) (mod (nth n y) 10)) ;takes LSD
-			    (setf y y)))
-		 (digit-correct y (+ 1 n)))
-	     (digit-correct y (+ 1 n)))))
+  (if (equal n (length y))
+      y
+      (digit-correct (correction-main y n) (+ 1 n))))
 
 ;;Converts a regular whole number into a listed version.
 ;;For example, 123 -> '(1 2 3)
@@ -35,7 +43,7 @@
   (if (> x 0)
       (progn (setf temp-list (cons (mod x 10) temp-list)) ;passes them in 1 LSD at a time
 	     (convert-to-list (floor x 10) temp-list)) ;cuts off the current LSD, loops again
-      (setf temp-list temp-list)))
+      temp-list))
 
 ;;Used to increment one of the numbers
 (defun increment(x)
@@ -47,7 +55,7 @@
 ;;Compares each element in a list
 ;;If x is bigger pass nil, if y bigger pass t
 (defun compare-digits(x y n)
-  (if (= n (length x))
+  (if (equal n (length x))
       'nil
       (cond ((> (nth n x) (nth n y))
 	     'nil)
@@ -75,7 +83,7 @@
 	     (setf x (cons 0 (reverse x)))
 	     (setf x (reverse x))
 	     (pad-with-zeros x (- n 1)))
-      (setf x x)))
+      x))
 
 ;;Removes the added zeros so we have the original list back
 (defun remove-zeros(x n)
@@ -84,7 +92,7 @@
 	     (setf x (cdr (reverse x)))
 	     (setf x (reverse x))
 	     (remove-zeros x (- n 1)))
-      (setf x x)))
+      x))
 
 ;;Actually does the multiplication.
 ;;We take number 'x' and pad it with zeros to start.
@@ -114,10 +122,17 @@
 ;;In the next function (multiply) it passes *result* into digit-correct where it is
 ;;fixed. This is why it's backwards (because digit-correct needs them backwards)
 ;;You then have '(5 3 5 5) in *result*, it gets reversed to have '(5 5 3 5) YAY!
+
+;; (defun multiply-more-digits(x y n i temp-buffer)
+;;   (if (equal i (length y))
+;;       temp-buffer
+;;       (multiply-more-digits x y (+ 1 n) (+ 1 i) 
+;; 			    (+ temp-buffer (* (nth n x) (nth (- i 1) y))))))
+
 (defun multiply-loop(x y n i)
-  (if (= n (- (length x) (- (length y) 1)))
+  (if (equal n (- (length x) (- (length y) 1)))
       't
-      (progn (if (= 1 (length y))
+      (progn (if (equal 1 (length y))
 		 (setf *result* (cons (* (nth n x) (nth i y)) *result*))
 		 (setf *result* (cons 
 		  (+ (* (nth n x) (nth (- i 1) y)) (* (nth (+ 1 n) x) (nth i y)))
@@ -135,7 +150,7 @@
 ;;computes the factorial of the number x (in list form)
 (defun factorial(x y z)
   (if (compare x y)
-      (setf z z)
+      z
       (progn (setf z (multiply z y))
 	     (factorial x (increment y)  z))))
 
