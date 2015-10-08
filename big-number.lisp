@@ -7,7 +7,7 @@
 ;;Digit and Least Significant Digit.
 
 ;;There still may be a few changes that I'll add to make this more Lispy, but
-;;for now, try doing 5000!; it has ~17000 digits in it and is awesome!
+;;for now, try doing 1000!; it has ~2500 digits in it and is awesome!
 
 (defparameter *result* '()) ;makes life easier
 
