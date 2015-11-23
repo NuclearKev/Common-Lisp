@@ -43,7 +43,7 @@
 (defun flatten (orig-list)
   (if (null orig-list)
       nil
-      (let ((elem (car orig-list)) (resto-list (cdr orig-list)))
+      (let ((elem (car orig-list)) (rest-of-list (cdr orig-list)))
 	(if (listp elem)
-	    (append (flatten elem) (flatten resto-list))
-	    (append (cons elem nil) (flatten resto-list))))))
+	    (append (flatten elem) (flatten rest-of-list))
+	    (append (cons elem nil) (flatten rest-of-list))))))
