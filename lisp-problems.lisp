@@ -47,3 +47,12 @@
 	(if (listp elem)
 	    (append (flatten elem) (flatten rest-of-list))
 	    (append (cons elem nil) (flatten rest-of-list))))))
+
+;; 8
+(defun compress (list)
+  (if (null list)
+      nil
+      (let ((current (car list)) (rest-of-list (cdr list)))
+	(if (equal current (car rest-of-list))
+	    (append '() (compress rest-of-list))
+	    (append (cons current nil) (compress rest-of-list))))))
