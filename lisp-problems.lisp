@@ -49,10 +49,10 @@
 	    (append (cons elem nil) (flatten rest-of-list))))))
 
 ;; 8
-(defun compress (list)
-  (if (null list)
+(defun compress (orig-list)
+  (if (null orig-list)
       nil
-      (let ((current (car list)) (rest-of-list (cdr list)))
+      (let ((current (car orig-list)) (rest-of-list (cdr orig-list)))
 	(if (equal current (car rest-of-list))
-	    (append '() (compress rest-of-list))
+	    (compress rest-of-list)
 	    (append (cons current nil) (compress rest-of-list))))))
