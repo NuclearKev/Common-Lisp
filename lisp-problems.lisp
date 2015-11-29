@@ -56,3 +56,13 @@
 	(if (equal current (car rest-of-list))
 	    (compress rest-of-list)
 	    (append (cons current nil) (compress rest-of-list))))))
+
+;; 9 NOT COMPLETE
+(defun pack (orig-list)
+  (if (null orig-list)
+      nil
+      (let ((current (car orig-list)) (rest-of-list (cdr orig-list)))
+	(if (equal current (car rest-of-list))
+	    (cons (append (cons current nil) (cons (car rest-of-list) nil)) (pack rest-of-list))
+	    (pack rest-of-list)))))
+
