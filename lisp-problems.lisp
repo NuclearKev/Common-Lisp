@@ -100,3 +100,49 @@
   (encode-mod-logic (pack L)))		;remember pack?
 
 ;; 12
+(defun list-maker (number-of-elements element)
+  (if (equal 0 number-of-elements)
+      nil
+      (append (list element) (list-maker (- number-of-elements 1) element))))
+
+(defun decode (orig-list)
+  (if (null orig-list)
+      nil
+      (let ((sublist (car orig-list)))
+	(if (listp sublist)
+	    (let ((number (car sublist)) (elem (cadr sublist)))
+	      (append (list-maker number elem) (decode (cdr orig-list))))
+	    (append (list sublist) (decode (cdr orig-list))))))) ;sublist isn't a list here
+
+;; 13
+(defun count-n-list (element rest-list number-of-elements)
+  (if (equal element (car rest-list))
+      (count-n-list element (cdr rest-list) (+ 1 number-of-elements))
+      (cons (list number-of-elements element) rest-list)))
+
+(defun encode-direct (orig-list)
+  (if (null orig-list)
+      nil
+      (let ((elem (car orig-list)))
+	(if (equal elem (cadr orig-list))
+	    (let ((new-list (count-n-list elem (cdr orig-list) 1)))
+	      (cons (car new-list) (encode-direct (cdr new-list))))
+	    (append (list elem) (encode-direct (cdr orig-list)))))))
+
+;; 14
+(defun dupli (L)
+  (if (null L)
+      nil
+      (let ((element-to-duplicate (car L)))
+	(append
+	 (list element-to-duplicate element-to-duplicate) (dupli (cdr L))))))
+
+;; 15
+(defun repli (orig-list number-of-repeats)
+  (if (null orig-list)
+      nil
+      (let ((elem (car orig-list)))
+	(append (list-maker 3 elem) (repli (cdr orig-list) number-of-repeats))))) ;list-maker from #12
+
+;; 16
+	
