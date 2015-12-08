@@ -142,7 +142,18 @@
   (if (null orig-list)
       nil
       (let ((elem (car orig-list)))
-	(append (list-maker 3 elem) (repli (cdr orig-list) number-of-repeats))))) ;list-maker from #12
+	(append (list-maker number-of-repeats elem) (repli (cdr orig-list) number-of-repeats))))) ;list-maker from #12
 
 ;; 16
-	
+(defun drop (orig-list pos)
+  (let ((elem (car orig-list)) (rest-of-list (cdr orig-list)))
+    (if (equal pos 0)
+	rest-of-list
+	(append (list elem) (drop rest-of-list (- pos 1))))))
+
+;; 17 UNFINISHED
+(defun split (orig-list pos)		;pos is the position to split
+  (let ((elem (car orig-list)) (rest-of-list (cdr orig-list)))
+    (if (equal pos 0)
+	nil
+	(cons (list elem) (split rest-of-list (- pos 1))))))
