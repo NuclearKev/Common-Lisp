@@ -157,5 +157,74 @@
       (list orig-list)
       (cons (car orig-list) (split (cdr orig-list) (- pos 1)))))
 
-   
+;; 18
+(defun slice (orig-list I K)		;I & K are the starting & stopping positions, respectively
+  (if (equal I 0)
+      (if (equal K 0)
+	  nil
+	  (cons (car orig-list) (slice (cdr orig-list) 0 (- K 1))))
+      (slice (cdr orig-list) (- I 1) K)))
+
+;; 19
+(defun rotate-loop (orig-list shift-num)
+  (if (equal 0 shift-num)
+      orig-list
+      (rotate-loop (append (cdr orig-list) (list (car orig-list))) (- shift-num 1))))
+
+(defun rotate (orig-list shift-num)	
+  (if (< shift-num 0)
+      (rotate-loop orig-list (+ (length orig-list) shift-num)) ;rotates to the right
+      (rotate-loop orig-list shift-num)))		       ;rotates to the left
+
+;; 20
+(defun remove-at (orig-list pos)	;pos is the element's position you wish to remove
+  (if (equal 0 pos)
+      (cdr orig-list)
+      (cons (car orig-list) (remove-at (cdr orig-list) (- pos 1)))))
+
+;; 21
+(defun insert-at (symbol orig-list pos)	;pos is the position in which you wish to insert a element
+  (if (equal 0 pos)
+      (cons symbol orig-list)
+      (cons (car orig-list) (insert-at symbol (cdr orig-list) (- pos 1)))))
+
+;; 22
+(defun range-loop (I K)
+  (if (equal I K)
+      (list K)
+      (cons I (range-loop (+ I 1) K))))
+
+(defun range (I K)			;I and K are the limits of the range
+  (if (< I K)
+      (range-loop I K)
+      (reverse (range-loop K I))))
+
+;; 23
+(defun rnd-select (orig-list number-of-elements)
+  (if (equal 0 number-of-elements)
+      nil
+      (let ((rand-pos (random (length orig-list))))
+	(cons (element-at orig-list rand-pos)
+	      (rnd-select (remove-at orig-list rand-pos) (- number-of-elements 1))))))
+
+;; 24
+(defun lotto-select (N M)		;N & M are the number of numbers and limit of numbers, respectively
+  (if (equal 0 N)
+      nil
+      (cons (random M) (lotto-select (- N 1) M))))
+
+;; 25
+(defun rnd-permu (orig-list)
+  (rnd-select orig-list (length orig-list))) ;doi?
+
+;; 26 UNFINISHED
+(defun grouper (group-size orig-list)
+  (if (equal 0 group-size)		;because we always have 2 elements from the start
+      nil
+      (cons (car orig-list) (grouper (- group-size 1) (cdr orig-list)))))
+
   
+(defun combination (group-size orig-list)
+  (if (null orig-list)
+      nil
+      (
