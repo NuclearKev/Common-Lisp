@@ -218,13 +218,33 @@
   (rnd-select orig-list (length orig-list))) ;doi?
 
 ;; 26 UNFINISHED
-(defun grouper (group-size orig-list)
-  (if (equal 0 group-size)		;because we always have 2 elements from the start
+(defun combine-list-elements (fir-list sec-list)
+  (if (null sec-list)
       nil
-      (cons (car orig-list) (grouper (- group-size 1) (cdr orig-list)))))
+      (append (list (append fir-list (list (car sec-list))))
+	       (combine-list-elements fir-list (cdr sec-list)))))
 
-  
-(defun combination (group-size orig-list)
-  (if (null orig-list)
+(defun process-lists (fir-list sec-list place-hold)
+  (if (null sec-list)
       nil
-      (
+      (let ((new-fir-list (append (remove-at fir-list place-hold) (list (car sec-list))))
+	    (new-sec-list (remove-at sec-list 0)))
+	(append (combine-list-elements fir-list sec-list) (process-lists new-fir-list new-sec-list place-hold)))))
+
+(defun core-process (fir-list sec-list place-hold pass-place)
+  (if (equal 0 place-hold)
+      nil
+      (let ((new-fir-list (append (remove-at fir-list (- place-hold 1)) (list (car sec-list))))
+	    (new-sec-list (remove-at sec-list 0)))
+	(append (process-lists fir-list sec-list pass-place)
+		(core-process new-fir-list new-sec-list (- place-hold 1) pass-place)))))
+
+(defun combination (group-size orig-list)
+  (let ((num-elem (- group-size 1)))
+    (if (or (> num-elem (length orig-list)) (< group-size 2))
+	nil
+	(let ((split-list (reverse (split orig-list num-elem))))
+	  (let ((fir-list (reverse (cdr split-list))) (sec-list (car split-list))
+		(remove-place (- num-elem 1)))
+	    (append (core-process fir-list sec-list remove-place remove-place)
+		    (combination group-size (cdr orig-list))))))))
