@@ -217,34 +217,44 @@
 (defun rnd-permu (orig-list)
   (rnd-select orig-list (length orig-list))) ;doi?
 
-;; 26 UNFINISHED
-(defun combine-list-elements (fir-list sec-list)
-  (if (null sec-list)
-      nil
-      (append (list (append fir-list (list (car sec-list))))
-	       (combine-list-elements fir-list (cdr sec-list)))))
+;; 26
+;; Since this is the hardest problem done so far, the function(s) is/are more
+;; complicated. In order to help with this confusion, I will explain how it works.
+;; Assume we start off with a list of '(a b c d) and we want groups of 3. The
+;; combination functions chops it up so that fir = '(a) and sec = '(b c d). This
+;; is to keep the combo-loop function from going crazy with nil. The size is
+;; obviously the size of the groups you want. pos is the current position of
+;; the list. In our case, '(a) has a position of 0, but '(a b) has a position of
+;; 1. This is so that we remove a certain element each time as you will see later.
+;; 
+;; We check to see if sec is null, this will tell us when we are at the end of a
+;; element group. For example, if fir = '(a b d), sec = '(), we are dont with the
+;; '(a b) case. Note that the only way we get '(a b d) is when sec is null AND the
+;; size of fir is equal to the group size. This is so we don't miss out on the last
+;; group in an element case. If fir is of size, we then can start making each group.
+;; At this point in time, fir IS a group, thus, it is the first to be cons'ed. We
+;; then remove the last element, move the first element of sec into fir, and chop
+;; off the first element of sec. This is run until sec is nil.
+;; For example, if we have fir = '(a b c), sec = '(d): fir is cons'ed and the next
+;; loop fir = '(a b d) sec = '(). This means we will return (list fir) and it will
+;; end this element case.
+;;
+;; To change element cases (or if fir is not of size) we shift is the car of sec
+;; and cdr sec. We then call the function again. However we append this to the
+;; recursion of next-fir. This is so we can go from fir='(a) to '(b) and repeat.
+(defun combo-loop (fir sec size pos)
+  (if (null sec)
+      (if (equal (length fir) size)	;to get the last group
+	  (list fir)
+	  nil)
+      (if (equal (length fir) size)
+	  (let ((new-fir (append (remove-at fir pos) (list (car sec))))
+		(new-sec (cdr sec)))
+	    (cons fir (combo-loop new-fir new-sec size pos)))
+	  (let ((shift-in-fir (append fir (list (car sec)))) (shift-in-sec (cdr sec)))
+	    (let ((next-fir (remove-at shift-in-fir pos)))
+	      (append (combo-loop shift-in-fir shift-in-sec size (+ pos 1))
+		      (combo-loop next-fir shift-in-sec size pos)))))))
 
-(defun process-lists (fir-list sec-list place-hold)
-  (if (null sec-list)
-      nil
-      (let ((new-fir-list (append (remove-at fir-list place-hold) (list (car sec-list))))
-	    (new-sec-list (remove-at sec-list 0)))
-	(append (combine-list-elements fir-list sec-list) (process-lists new-fir-list new-sec-list place-hold)))))
-
-(defun core-process (fir-list sec-list place-hold pass-place)
-  (if (equal 0 place-hold)
-      nil
-      (let ((new-fir-list (append (remove-at fir-list (- place-hold 1)) (list (car sec-list))))
-	    (new-sec-list (remove-at sec-list 0)))
-	(append (process-lists fir-list sec-list pass-place)
-		(core-process new-fir-list new-sec-list (- place-hold 1) pass-place)))))
-
-(defun combination (group-size orig-list)
-  (let ((num-elem (- group-size 1)))
-    (if (or (> num-elem (length orig-list)) (< group-size 2))
-	nil
-	(let ((split-list (reverse (split orig-list num-elem))))
-	  (let ((fir-list (reverse (cdr split-list))) (sec-list (car split-list))
-		(remove-place (- num-elem 1)))
-	    (append (core-process fir-list sec-list remove-place remove-place)
-		    (combination group-size (cdr orig-list))))))))
+(defun combination (group-size org-list)
+  (combo-loop (list (car org-list)) (cdr org-list) group-size 0))
