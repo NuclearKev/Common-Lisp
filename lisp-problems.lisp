@@ -258,3 +258,89 @@
 
 (defun combination (group-size org-list)
   (combo-loop (list (car org-list)) (cdr org-list) group-size 0))
+
+;; 31
+(defun prime-loop (number factor)
+  (if (equal number factor)
+      t
+      (if (equal 0 (mod number factor))
+	  nil
+	  (prime-loop number (+ factor 1)))))
+
+(defun is-prime (number)
+  (prime-loop number 2))
+
+;; 32
+(defun gcb-loop (fir-num sec-num cur-divisor g-divisor)
+  (let ((new-cur-divisor (+ cur-divisor 1)))
+    (if (and (equal 0 (mod fir-num cur-divisor)) (equal 0 (mod sec-num cur-divisor)))
+	(if (or (equal fir-num cur-divisor) (equal sec-num cur-divisor))
+	    cur-divisor
+	    (if (> cur-divisor g-divisor)
+		(gcb-loop fir-num sec-num new-cur-divisor cur-divisor) ;current divisor becomes the greatest
+		(gcb-loop fir-num sec-num new-cur-divisor g-divisor)))
+	(if (or (equal fir-num cur-divisor) (equal sec-num cur-divisor))
+	    g-divisor
+	    (gcb-loop fir-num sec-num new-cur-divisor g-divisor)))))
+
+(defun my-gcd (fir-num sec-num)
+  (gcb-loop fir-num sec-num 2 1))
+
+;; 33
+(defun coprime (fir-num sec-num)
+  (if (equal 1 (my-gcd fir-num sec-num))
+      t
+      nil))
+
+;; 34
+(defun phi-loop (m r)
+  (if (equal m r)
+      0
+      (if (coprime m r)
+	  (1+ (phi-loop m (+ r 1)))
+	  (phi-loop m (+ r 1)))))
+
+(defun totient-phi (m)			;m is the upper limit
+  (if (equal 1 m)
+      1
+      (phi-loop m 1)))
+
+;; 35
+(defun prime-factors-loop (number divisor)
+  (if (is-prime number)
+      (list number)
+      (if (equal 0 (mod number divisor))
+	  (let ((new-number (/ number divisor)))
+	    (append (list divisor) (prime-factors-loop new-number 2)))
+	  (prime-factors-loop number (+ divisor 1)))))
+
+(defun prime-factors (number)
+  (if (is-prime number)
+      number
+      (prime-factors-loop number 2)))
+
+;; 36
+(defun prime-factors-multi (number)
+  (encode (prime-factors number))) ;doi?
+
+;; 37
+;; This isn't how I was "supposed" to do it, however, it works
+;; NOTE: This is ~3 times as efficient as the original
+(defun phi-improved-loop (phi-list)
+  (if (null phi-list)
+      1
+      (let ((cur-num (car phi-list)) (rest-of-list (cdr phi-list)))
+	(let ((multi (car cur-num)) (prime (cadr cur-num)))
+	  (* (* (- prime 1) (expt prime (- multi 1))) (phi-improved-loop rest-of-list))))))
+
+(defun phi-improved (m)
+  (phi-improved-loop (prime-factors-multi m)))
+
+;; 39
+(defun prime-range (lower upper)	;lower and upper are the limits
+  (if (equal lower upper)
+      nil
+      (let ((new-lower (+ lower 1)))
+	(if (is-prime lower)
+	    (cons lower (prime-range new-lower upper))
+	    (prime-range new-lower upper)))))
