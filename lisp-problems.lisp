@@ -344,3 +344,33 @@
 	(if (is-prime lower)
 	    (cons lower (prime-range new-lower upper))
 	    (prime-range new-lower upper)))))
+
+;; 40
+(defun goldbach-logic (number fir)	;fir is the first "prime" number
+  (if (is-prime fir)
+      (let ((sec (- number fir)))
+	(if (is-prime sec)
+	    (list fir sec)
+	    (goldbach-logic number (+ fir 1))))
+      (goldbach-logic number (+ fir 1))))
+
+(defun goldbach (number)
+  (if (evenp number)
+      (goldbach-logic number 2)
+      0))
+
+;; 41
+;; Setup to display only the sums that contain numbers greater than 50
+(defun goldbach-list (fir sec)		;[fir, sec]
+  (if (> fir sec)
+      'done
+      (let ((primes-list (goldbach fir)))
+	(if (equal 0 primes-list)
+	    (goldbach-list (+ fir 1) sec)
+	    (if (> (car primes-list) 49)
+		(progn (format t "~d = ~d + ~d" fir (car primes-list) (cadr primes-list))
+		       (fresh-line)
+		       (goldbach-list (+ fir 1) sec))
+		(goldbach-list (+ fir 1) sec))))))
+  
+;; That is all. The rest of the problems I'm not interesting in doing
