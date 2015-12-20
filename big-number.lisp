@@ -11,31 +11,31 @@
 
 (defparameter *result* '()) ;makes life easier
 
-(defun digit-correct-middle-of-list(y n)
-  (setf (nth (+ n 1) y) (+ (nth (+ n 1) y) (floor (nth n y) 10))) ;takes the MSD
-  (setf (nth n y) (mod (nth n y) 10)) ;takes the LSD
-  y)
+(defun digit-correct-middle-of-list(cur-list cur-pos)
+  (setf (nth (+ cur-pos 1) cur-list) (+ (nth (+ cur-pos 1) cur-list) (floor (nth cur-pos cur-list) 10))) ;takes the MSD
+  (setf (nth cur-pos cur-list) (mod (nth cur-pos cur-list) 10)) ;takes the LSD
+  cur-list)
 
-(defun digit-correct-end-of-list(y n)
-  (setf y (cons (floor (nth n y) 10) (reverse y))) ;takes MSD
-  (setf y (reverse y))
-  (setf (nth n y) (mod (nth n y) 10)) ;takes LSD
-  y)
+(defun digit-correct-end-of-list(cur-list cur-pos)
+  (setf cur-list (cons (floor (nth cur-pos cur-list) 10) (reverse cur-list))) ;takes MSD
+  (setf cur-list (reverse cur-list))
+  (setf (nth cur-pos cur-list) (mod (nth cur-pos cur-list) 10)) ;takes LSD
+  cur-list)
 
-(defun correction-main(y n)
-  (if (< 9 (nth n y))
-      (if (< (+ 1 n) (length y))
-	  (setf y (digit-correct-middle-of-list y n))
-	  (setf y (digit-correct-end-of-list y n)))
-      y))
+(defun correction-main(cur-list cur-pos)
+  (if (< 9 (nth cur-pos cur-list))
+      (if (< (+ 1 cur-pos) (length cur-list))
+	  (setf cur-list (digit-correct-middle-of-list cur-list cur-pos))
+	  (setf cur-list (digit-correct-end-of-list cur-list cur-pos)))
+      cur-list))
 
 
 ;;Corrects digits if it is greater than 10.
 ;;This keeps it so that each element is 1 digit.
-(defun digit-correct(y n)
-  (if (equal n (length y))
-      y
-      (digit-correct (correction-main y n) (+ 1 n))))
+(defun digit-correct(cur-list cur-pos)
+  (if (equal cur-pos (length cur-list))
+      cur-list
+      (digit-correct (correction-main cur-list cur-pos) (+ 1 cur-pos))))
 
 ;;Converts a regular whole number into a listed version.
 ;;For example, 123 -> '(1 2 3)
@@ -54,24 +54,26 @@
 ;;Compares each element in a list
 ;;If x is bigger pass nil, if y bigger pass t
 (defun compare-digits(x y n)
-  (if (equal n (length x))
-      'nil
-      (cond ((> (nth n x) (nth n y))
-	     'nil)
-	    ((< (nth n x) (nth n y))
-	     't)
-	    (t
-	     (compare-digits x y (+ 1 n))))))
+  (let ((nth-x (nth n x)) (nth-y (nth n y)))
+    (if (equal n (length x))
+	nil
+	(cond ((> nth-x nth-y)
+	       nil)
+	      ((< nth-x nth-y)
+	       t)
+	      (t
+	       (compare-digits x y (+ 1 n)))))))
 
 ;;Compares the lengths of the lists and calls compare-digits if they are of
 ;;equal length.
 (defun compare(x y)
-  (cond ((> (length x) (length y))
-	 'nil)
-	((< (length x) (length y))
-	 't)
-	(t
-	 (compare-digits x y 0))))
+  (let ((len-x (length x)) (len-y (length y)))
+    (cond ((> len-x len-y)
+	   nil)
+	  ((< len-x len-y)
+	   t)
+	  (t
+	   (compare-digits x y 0)))))
 
 ;;Adds zeros the front and back of the list being multiplied
 ;;This prevents errors like: "NIL is not a number"
