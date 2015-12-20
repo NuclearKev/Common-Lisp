@@ -20,21 +20,21 @@
 (defparameter *black-spaces* '()) ;contains all blacked coordinates
 
 ;;Checks to see if the current position is a black one
-(defun check-black(l)
+(defun check-black (l)
   (when (member l *black-spaces*)
     'nil
     't))
 
 ;;The sole purpose of this function is to make the code more readable
-(defun add-black(l)
+(defun add-black (l)
   (push l *black-spaces*))
 
 ;;The sole purpose of this function is to make the code more readable
-(defun remove-black(l)
+(defun remove-black (l)
    (setf *black-spaces* (remove l *black-spaces*)))
 
 ;;When on a black space, sets new direction and new space
-(defun black-move(l dir)
+(defun black-moven (l dir)
   (remove-black l)
   (case dir
     ((up)    (- l 1))
@@ -43,7 +43,7 @@
     ((left)  (- l #C(0 1)))))
 
 ;;When on a white space, sets new direction and new space
-(defun white-move(l dir)
+(defun white-move (l dir)
   (add-black l)
   (case dir
     ((up)    (+ l 1))
@@ -67,7 +67,7 @@
 ;;Main movement function
 ;;Checks to see if the space is black, and chooses which function to call
 ;;Then passes the new postion back into itself
-(defun move(l dir steps)		;l is current position
+(defun move (l dir steps)		;l is current position
   (let ((is-black (check-black l)) (next-steps (- steps 1)))
     (if (equal 0 steps)
 	'done
@@ -80,7 +80,7 @@
 ;;enter 'b for black, 'w for white (or anything but 'b)
 ;;enter 'up, 'right, 'down, or 'left for direction
 ;;enter the number of steps you'd like the ant to make
-(defun start(x y b-or-w direction number-of-steps)
+(defun start (x y b-or-w direction number-of-steps)
   (let ((c (complex x y)))
     (setf *black-spaces* '()) ;just in case you run this after you ran it before
     (if (eq 'b b-or-w)
@@ -92,7 +92,7 @@
 ;;you don't want to destroy *black-spaces*.
 ;;The "write-to-file" function is found in the gnuplot-out.lisp program
 ;;Please note: You *must* run (new-file "foo.out") before running this function.
-(defun graph-lang(blacklist)
+(defun graph-lang (blacklist)
   (if (null blacklist)
       'all-done
       (let ((c (car blacklist)))
