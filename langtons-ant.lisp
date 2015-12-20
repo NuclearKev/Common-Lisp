@@ -11,45 +11,38 @@
 ;;Also note if you see a value in the *black-spaces* list that is
 ;;just a single number, this means the imaginary part is zero, or
 ;; in other words, y = 0.
-;;For exmaple: *black-list* = '(#C(1 1) #C(2 3) 3), this means we have
+;;For exmaple: black-spaces = '(#C(1 1) #C(2 3) 3), this means we have
 ;;3 points, (1,1), (2,3), and (3, 0). Enjoy.
 
 ;;You'd want to change this to where ever your gnuplot-out.lisp is
 (load "/home/kevin/development/lisp/Common-Lisp/gnuplot-out.lisp")
 
-(defparameter *black-spaces* '()) ;contains all blacked coordinates
-
 ;;Checks to see if the current position is a black one
-(defun check-black (l)
-  (when (member l *black-spaces*)
-    'nil
-    't))
+(defun check-black (cur-pos black-spaces)
+  (if (member cur-pos black-spaces)
+      t
+      nil))
 
 ;;The sole purpose of this function is to make the code more readable
-(defun add-black (l)
-  (push l *black-spaces*))
+(defun add-black (cur-pos black-spaces)
+  (cons cur-pos black-spaces))
 
 ;;The sole purpose of this function is to make the code more readable
-(defun remove-black (l)
-   (setf *black-spaces* (remove l *black-spaces*)))
+(defun remove-black (cur-pos black-spaces)
+  (remove cur-pos black-spaces))
 
-;;When on a black space, sets new direction and new space
-(defun black-moven (l dir)
-  (remove-black l)
-  (case dir
-    ((up)    (- l 1))
-    ((down)  (+ l 1))
-    ((right) (+ l #C(0 1)))
-    ((left)  (- l #C(0 1)))))
-
-;;When on a white space, sets new direction and new space
-(defun white-move (l dir)
-  (add-black l)
-  (case dir
-    ((up)    (+ l 1))
-    ((down)  (- l 1))
-    ((right) (- l #C(0 1)))
-    ((left)  (+ l #C(0 1)))))
+(defun position-changer (cur-pos dir is-black)
+  (if is-black
+      (case dir
+	((up)    (- cur-pos 1))
+	((down)  (+ cur-pos 1))
+	((right) (+ cur-pos #C(0 1)))
+	((left)  (- cur-pos #C(0 1))))
+      (case dir				
+	((up)    (+ cur-pos 1))
+	((down)  (- cur-pos 1))
+	((right) (- cur-pos #C(0 1)))
+	((left)  (+ cur-pos #C(0 1))))))
 
 (defun direction-changer (dir is-black)
   (if is-black
@@ -67,13 +60,15 @@
 ;;Main movement function
 ;;Checks to see if the space is black, and chooses which function to call
 ;;Then passes the new postion back into itself
-(defun move (l dir steps)		;l is current position
-  (let ((is-black (check-black l)) (next-steps (- steps 1)))
+(defun move (cur-pos dir steps black-spaces)		;l is current position
+  (let ((is-black (check-black cur-pos black-spaces)) (next-steps (- steps 1)))
     (if (equal 0 steps)
-	'done
+	black-spaces
 	(if is-black
-	    (move (black-move l dir) (direction-changer dir t) next-steps)
-	    (move (white-move l dir) (direction-changer dir nil) next-steps)))))
+	    (move (position-changer cur-pos dir is-black) (direction-changer dir t) next-steps
+		  (remove-black cur-pos black-spaces))
+	    (move (position-changer cur-pos dir is-black) (direction-changer dir nil) next-steps
+		  (add-black cur-pos black-spaces))))))
 
 
 ;;enter the x and y coordinates you'd like to start at
@@ -82,14 +77,11 @@
 ;;enter the number of steps you'd like the ant to make
 (defun start (x y b-or-w direction number-of-steps)
   (let ((c (complex x y)))
-    (setf *black-spaces* '()) ;just in case you run this after you ran it before
     (if (eq 'b b-or-w)
-	(add-black c))
-    (move c direction number-of-steps)))
+	(move c direction number-of-steps (list c))
+	(move c direction number-of-steps '()))))
 
-;;You want to pass *black-spaces* to this.
-;;The reason this takes an argument is because you chop *black-spaces* up and
-;;you don't want to destroy *black-spaces*.
+;;You want to pass the start function to this.
 ;;The "write-to-file" function is found in the gnuplot-out.lisp program
 ;;Please note: You *must* run (new-file "foo.out") before running this function.
 (defun graph-lang (blacklist)
@@ -100,4 +92,3 @@
 	      (y (imagpart c)))
 	  (write-to-file "langton.out" x y)
 	  (graph-lang (cdr blacklist))))))
-      
