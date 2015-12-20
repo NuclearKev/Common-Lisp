@@ -11,44 +11,34 @@
 
 (defparameter *result* '()) ;makes life easier
 
-(defun digit-correct-middle-of-list(cur-list cur-pos)
-  (setf (nth (+ cur-pos 1) cur-list) (+ (nth (+ cur-pos 1) cur-list) (floor (nth cur-pos cur-list) 10))) ;takes the MSD
-  (setf (nth cur-pos cur-list) (mod (nth cur-pos cur-list) 10)) ;takes the LSD
-  cur-list)
-
-(defun digit-correct-end-of-list(cur-list cur-pos)
-  (setf cur-list (cons (floor (nth cur-pos cur-list) 10) (reverse cur-list))) ;takes MSD
-  (setf cur-list (reverse cur-list))
-  (setf (nth cur-pos cur-list) (mod (nth cur-pos cur-list) 10)) ;takes LSD
-  cur-list)
-
-(defun correction-main(cur-list cur-pos)
-  (if (< 9 (nth cur-pos cur-list))
-      (if (< (+ 1 cur-pos) (length cur-list))
-	  (setf cur-list (digit-correct-middle-of-list cur-list cur-pos))
-	  (setf cur-list (digit-correct-end-of-list cur-list cur-pos)))
-      cur-list))
-
-
-;;Corrects digits if it is greater than 10.
-;;This keeps it so that each element is 1 digit.
-(defun digit-correct(cur-list cur-pos)
-  (if (equal cur-pos (length cur-list))
-      cur-list
-      (digit-correct (correction-main cur-list cur-pos) (+ 1 cur-pos))))
+;; Fix any digits that are over 9.
+;; This function is quite complicated; however, with some thought, it can be
+;; figured out.
+(defun digit-fixer (org-list)
+  (let ((cur-elem (car org-list)) (rest-of-list (cdr org-list)))
+    (let ((end-of-list (null rest-of-list)))
+      (if (> cur-elem 9)
+	  (let ((msd (floor cur-elem 10)) (lsd (mod cur-elem 10)))
+	    (if end-of-list
+		(list lsd msd)
+		(let ((new-next-elem (+ msd (car rest-of-list))))
+		  (cons lsd (digit-fixer (cons new-next-elem (cdr rest-of-list)))))))
+	  (if end-of-list
+	      (list cur-elem)
+	      (cons cur-elem (digit-fixer rest-of-list)))))))
 
 ;;Converts a regular whole number into a listed version.
 ;;For example, 123 -> '(1 2 3)
-(defun convert-to-list(x temp-list)
-  (if (> x 0)
-      (convert-to-list (floor x 10) (cons (mod x 10) temp-list))
-      temp-list))
+(defun convert-to-list (number)
+  (if (> number 0)
+      (append (convert-to-list (floor number 10)) (list (mod number 10)))
+      nil))
 
 ;;Used to increment one of the numbers
 (defun increment(x)
   (setf x (reverse x))
   (setf (nth 0 x) (+ 1 (nth 0 x)))
-  (setf x (digit-correct x 0))
+  (setf x (digit-fixer x))
   (setf x (reverse x)))
 
 ;;Compares each element in a list
@@ -153,4 +143,4 @@
       (factorial x (increment y)  (multiply z y))))
 
 (defun take-factorial(f)
-  (factorial (convert-to-list f '()) '(2) '(1)))
+  (factorial (convert-to-list f) '(2) '(1)))
