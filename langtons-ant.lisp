@@ -18,9 +18,6 @@
 (load "/home/kevin/development/lisp/Common-Lisp/gnuplot-out.lisp")
 
 (defparameter *black-spaces* '()) ;contains all blacked coordinates
-(defparameter *steps* nil)
-;;in order to make the move function smaller I needed to make this global
-(defparameter *direction* nil) 
 
 ;;Checks to see if the current position is a black one
 (defun check-black(l)
@@ -36,49 +33,48 @@
 (defun remove-black(l)
    (setf *black-spaces* (remove l *black-spaces*)))
 
-;;Made keeping track of the steps easier
-(defun steps()
-  (if (equal *steps* 0)
-      'nil
-      't))
-
 ;;When on a black space, sets new direction and new space
-(defun black-move(l)
+(defun black-move(l dir)
   (remove-black l)
-  (case *direction*
-    ((up)    (setf *direction* 'left)
-             (- l 1))
-    ((down)  (setf *direction* 'right)
-             (+ l 1))
-    ((right) (setf *direction* 'up)
-             (+ l #C(0 1)))
-    ((left)  (setf *direction* 'down)
-             (- l #C(0 1)))))
+  (case dir
+    ((up)    (- l 1))
+    ((down)  (+ l 1))
+    ((right) (+ l #C(0 1)))
+    ((left)  (- l #C(0 1)))))
 
 ;;When on a white space, sets new direction and new space
-(defun white-move(l)
+(defun white-move(l dir)
   (add-black l)
-  (case *direction*
-    ((up)    (setf *direction* 'right)
-             (+ l 1))
-    ((down)  (setf *direction* 'left)
-             (- l 1))
-    ((right) (setf *direction* 'down)
-             (- l #C(0 1)))
-    ((left)  (setf *direction* 'up)
-             (+ l #C(0 1)))))
+  (case dir
+    ((up)    (+ l 1))
+    ((down)  (- l 1))
+    ((right) (- l #C(0 1)))
+    ((left)  (+ l #C(0 1)))))
+
+(defun direction-changer (dir is-black)
+  (if is-black
+      (case dir
+	((up)    'left)
+	((down)  'right)
+	((right) 'up)
+	((left)  'down))
+      (case dir
+	((up)    'right)
+	((down)  'left)
+	((right) 'down)
+	((left)  'up))))
 
 ;;Main movement function
 ;;Checks to see if the space is black, and chooses which function to call
 ;;Then passes the new postion back into itself
-(defun move(l)
-  (let ((is-black (check-black l)))
-    (setf *steps* (- *steps* 1))
-    (if (steps)
+(defun move(l dir steps)		;l is current position
+  (let ((is-black (check-black l)) (next-steps (- steps 1)))
+    (if (equal 0 steps)
+	'done
 	(if is-black
-	    (move (black-move l))
-	    (move (white-move l)))
-	'done)))
+	    (move (black-move l dir) (direction-changer dir t) next-steps)
+	    (move (white-move l dir) (direction-changer dir nil) next-steps)))))
+
 
 ;;enter the x and y coordinates you'd like to start at
 ;;enter 'b for black, 'w for white (or anything but 'b)
@@ -86,13 +82,10 @@
 ;;enter the number of steps you'd like the ant to make
 (defun start(x y b-or-w direction number-of-steps)
   (let ((c (complex x y)))
-    (setf *steps* number-of-steps)
     (setf *black-spaces* '()) ;just in case you run this after you ran it before
-    (setf *direction* direction)
     (if (eq 'b b-or-w)
-	(progn (add-black c)
-	       (move c))
-	(move c))))
+	(add-black c))
+    (move c direction number-of-steps)))
 
 ;;You want to pass *black-spaces* to this.
 ;;The reason this takes an argument is because you chop *black-spaces* up and
