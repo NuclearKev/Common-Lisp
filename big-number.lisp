@@ -9,8 +9,6 @@
 ;;There still may be a few changes that I'll add to make this more Lispy, but
 ;;for now, try doing 1000!; it has ~2500 digits in it and is awesome!
 
-(defparameter *result* '()) ;makes life easier
-
 ;; Fix any digits that are over 9.
 ;; This function is quite complicated; however, with some thought, it can be
 ;; figured out.
@@ -34,55 +32,48 @@
       (append (convert-to-list (floor number 10)) (list (mod number 10)))
       nil))
 
+
 ;;Used to increment one of the numbers
-(defun increment(x)
-  (setf x (reverse x))
-  (setf (nth 0 x) (+ 1 (nth 0 x)))
-  (setf x (digit-fixer x))
-  (setf x (reverse x)))
+(defun increment(number-list)
+  (let ((reversed-list (reverse number-list)))
+    (let ((elem-to-increment (car reversed-list)) (rest-of-list (cdr reversed-list)))
+      (reverse (digit-fixer (cons (+ elem-to-increment 1) rest-of-list))))))
+  
 
 ;;Compares each element in a list
-;;If x is bigger pass nil, if y bigger pass t
-(defun compare-digits(x y n)
-  (let ((nth-x (nth n x)) (nth-y (nth n y)))
-    (if (equal n (length x))
+;;If the first number is bigger pass nil, if second number is bigger pass t
+(defun compare-digits(fir-num sec-num pos) ;pos is the current position
+  (let ((nth-fir-num (nth pos fir-num)) (nth-sec-num (nth pos sec-num)))
+    (if (equal pos (length fir-num))
 	nil
-	(cond ((> nth-x nth-y)
+	(cond ((> nth-fir-num nth-sec-num)
 	       nil)
-	      ((< nth-x nth-y)
+	      ((< nth-fir-num nth-sec-num)
 	       t)
 	      (t
-	       (compare-digits x y (+ 1 n)))))))
+	       (compare-digits fir-num sec-num (+ 1 pos)))))))
+
 
 ;;Compares the lengths of the lists and calls compare-digits if they are of
 ;;equal length.
-(defun compare(x y)
-  (let ((len-x (length x)) (len-y (length y)))
-    (cond ((> len-x len-y)
+(defun compare(fir-num sec-num)
+  (let ((len-fir-num (length fir-num)) (len-sec-num (length sec-num)))
+    (cond ((> len-fir-num len-sec-num)
 	   nil)
-	  ((< len-x len-y)
+	  ((< len-fir-num len-sec-num)
 	   t)
 	  (t
-	   (compare-digits x y 0)))))
+	   (compare-digits fir-num sec-num 0)))))
+
 
 ;;Adds zeros the front and back of the list being multiplied
 ;;This prevents errors like: "NIL is not a number"
-;;The number of zeros added: (length y) - 1
-(defun pad-with-zeros(x n)
+;;The number of zeros added: 2((length y) - 1)
+(defun pad-with-zeros(num-list n)	;n is a loop variable
   (if (> n 0)
-      (progn (push 0 x)
-	     (setf x (reverse x))
-	     (push 0 x)
-	     (pad-with-zeros (reverse x) (- n 1)))
-      x))
+      (pad-with-zeros (cons 0 (reverse num-list)) (- n 1))
+      num-list))
 
-;;Removes the added zeros so we have the original list back
-(defun remove-zeros(x n)
-    (if (> n 0)
-      (progn (setf x (cdr x))
-	     (setf x (cdr (reverse x)))
-	     (remove-zeros (reverse x) (- n 1)))
-      x))
 
 ;;Actually does the multiplication.
 ;;We take number 'x' and pad it with zeros to start.
@@ -115,32 +106,33 @@
 
 ;;This function multiplies the current digits in position 'n' and adds them into
 ;;the temp-buffer, which is then returned back to multiply-loop
-(defun multiply-digits(x y n i temp-buffer)
-  (if (equal i (length y))
+(defun multiply-digits(fir-num sec-num n i temp-buffer) ;n is current position, i is a loop variable
+  (if (equal i (length sec-num))
       temp-buffer
-      (multiply-digits x y (+ 1 n) (+ 1 i) 
-			    (+ temp-buffer (* (nth n x) (nth i y))))))
+      (multiply-digits fir-num sec-num (+ 1 n) (+ 1 i) 
+			    (+ temp-buffer (* (nth n fir-num) (nth i sec-num))))))
+
 
 ;;This function basically conses the result list with the output from the
 ;;multiply-digits function, then calls itself with a new position (n)
-(defun multiply-loop(x y n i)
-  (if (equal n (- (length x) (- (length y) 1)))
-      't
-      (progn (setf *result* (cons (multiply-digits x y n 0 0) *result*))
-	     (multiply-loop x y (+ 1 n) i))))
+(defun multiply-loop(fir-num sec-num n i)
+  (if (equal n (- (length fir-num) (- (length sec-num) 1)))
+      nil
+      (cons (multiply-digits fir-num sec-num n 0 0) (multiply-loop fir-num sec-num (+ 1 n) i))))
+
 
 ;;must be called before the multiply-loop function (this is a setup function) 
-(defun multiply(x y)
-  (setf *result* '())
-  (setf x (pad-with-zeros x (- (length y) 1)))
-  (multiply-loop x (reverse y) 0 (- (length y) 1))
-  (setf *result* (reverse (digit-correct *result* 0))))
+(defun multiply(fir-num sec-num)
+  (let ((pad-fir-num (pad-with-zeros fir-num (* 2 (- (length sec-num) 1)))))
+    (reverse (digit-fixer (reverse (multiply-loop pad-fir-num (reverse sec-num) 0 (- (length sec-num) 1)))))))
+  
 
-;;computes the factorial of the number x (in list form)
-(defun factorial(x y z)
-  (if (compare x y)
+;;computes the factorial of the number fir-num (in list form)
+(defun take-factorial(fir-num sec-num z)
+  (if (compare fir-num sec-num)
       z
-      (factorial x (increment y)  (multiply z y))))
+      (take-factorial fir-num (increment sec-num) (multiply z sec-num))))
 
-(defun take-factorial(f)
-  (factorial (convert-to-list f) '(2) '(1)))
+
+(defun factorial(f)
+  (take-factorial (convert-to-list f) '(2) '(1)))
