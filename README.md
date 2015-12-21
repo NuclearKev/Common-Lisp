@@ -1,20 +1,20 @@
 # Common-Lisp
 
-Some of the programs in this repo are not originally written by me. The following were games (or programs) that we taught in the amazing book The Land of Lisp:
+# Some of the programs in this repo are not originally written by me. The following were games (or programs) that we taught in the amazing book The Land of Lisp:
 
-attack-of-the-robots.lisp
+* attack-of-the-robots.lisp
 
-dod-v1.lisp
+* dod-v1.lisp
 
-evolution.lisp
+* evolution.lisp
 
-graph-util.lisp
+* graph-util.lisp
 
-orc-battle.lisp
+* orc-battle.lisp
 
-wizard-adventure.lisp
+* wizard-adventure.lisp
 
-wumpus.lisp
+* wumpus.lisp
 
 Also, those programs should be ran using CLISP. Although it only matters with wumpus.lisp, they were written for CLISP and you may run into problems if you don't use it.
 
@@ -22,4 +22,4 @@ langtons-ant.lisp is a simulation of Langton's Ant, a mathematical concept where
 
 gnuplot-out.lisp is a simple program that will print an ordered pair into a file. This program is meant to be ran in a recursive function within the main program. For example: you put a bunch of points in a list, then call this function ordered pair by ordered pair.
 
-big-number.lisp is a program that will do huge factorials (like 1000!). It uses a weird multiplication method that requires all the values to be in lists. Luckily, it is written in LISP, the best listing language! You can go up to 3000! and it takes about 14 minutes. I was too impatient to try anything bigger.
+big-number.lisp is a program that will do huge factorials (like 1000!). It uses a weird multiplication method that requires all the values to be in lists. Luckily, it is written in LISP, the best listing language! It'll take about 8.7 seconds to do 1000! on an old Dell Latitude. 
