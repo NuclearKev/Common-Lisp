@@ -145,3 +145,26 @@
     (let ((pad-sec-num (pad-front sec-num (- len-fir len-sec))))
       (reverse
        (digit-fixer (add-loop (reverse fir-num) (reverse pad-sec-num)))))))
+
+;;; Subtraction ;;;
+(defun carry-fix (number-list)
+  (if (null number-list)
+      nil
+      (let ((cur-digit (car number-list)) (carried-digit (cadr number-list))) ;carried-digit may or may not be carried
+	(if (> 0 cur-digit)
+	    (let ((temp-list (list (+ cur-digit 10) (- carried-digit 1))))
+	      (let ((new-number-list (append temp-list (cddr number-list))))
+		(cons (car new-number-list) (carry-fix (cdr new-number-list)))))
+	    (cons cur-digit (carry-fix (cdr number-list)))))))
+
+(defun subtract-loop (fir-num sec-num)
+  (if (null fir-num)			;they are null at the same time
+      nil
+      (let ((fir-digit (car fir-num)) (sec-digit (car sec-num)))
+	(cons (- fir-digit sec-digit) (subtract-loop (cdr fir-num) (cdr sec-num))))))
+  
+(defun subtract (fir-num sec-num)
+  (let ((len-fir (length fir-num)) (len-sec (length sec-num)))
+    (let ((pad-sec-num (pad-front sec-num (- len-fir len-sec))))
+      (reverse
+       (carry-fix (subtract-loop (reverse fir-num) (reverse pad-sec-num)))))))
