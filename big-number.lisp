@@ -1,8 +1,8 @@
 ;;This program is Free Software under the GNU GPLv3.0 and above
 
 ;; This is a library that handles really really big numbers. You can use it
-;; to add, subtract, and multiply them. To see it in action, check out my
-;; other programs factorial.lisp or fibonacci.lisp.
+;; to add, subtract, multiply, and divide them. To see it in action, check out
+;; my other programs factorial.lisp or fibonacci.lisp.
 
 ;; Maybe one day I'll just some macros to use the standard *, +, - symbols.
 
@@ -182,3 +182,29 @@
     (let ((pad-sec-num (pad-front sec-num (- len-fir len-sec))))
       (remove-leading-zeros (reverse
 			     (carry-fix (subtract-loop (reverse fir-num) (reverse pad-sec-num))))))))
+
+;;; Division ;;;
+
+;; This functions brute forces it's way to find the best quotient for the
+;; current slice of the divisor.
+(defun find-quotient (dividend current-divisor possible-quo)
+  (let ((subtracter (multiply dividend possible-quo)))
+    (if (compare subtracter current-divisor) ;t when current-divisor is bigger
+	(find-quotient dividend current-divisor (addition possible-quo '(1)))
+	(if (equal subtracter current-divisor)
+	    possible-quo
+	    (subtract possible-quo '(1))))))
+  
+(defun divide-loop (dividend divisor cur-div)
+  (if (null divisor)
+      nil
+      (let ((rest-of-div (cdr divisor)))
+	(if (compare dividend cur-div)	;t when cur-div is bigger
+	    (let ((quotient (find-quotient dividend cur-div '(1))))
+	      (append quotient (divide-loop dividend rest-of-div
+					  (append (subtract cur-div (multiply dividend quotient)) (list (cadr divisor))))))
+	    (cons 0 (divide-loop dividend rest-of-div (append cur-div (list (cadr divisor)))))))))
+	    
+
+(defun divide (dividend divisor)
+  (remove-leading-zeros (divide-loop dividend divisor (list (car divisor)))))
