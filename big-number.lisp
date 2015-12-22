@@ -1,13 +1,21 @@
 ;;This program is Free Software under the GNU GPLv3.0 and above
 
-;;This program will take the factorial of any number you give it.
-;;It stores each digit of the number in a list so that you can deal with huge
-;;numbers. 
-;;In the comments, I use the terms MSD and LSD, which means, Most Significant 
-;;Digit and Least Significant Digit.
+;; This is a library that handles really really big numbers. You can use it
+;; to add, subtract, and multiply them. To see it in action, check out my
+;; other programs factorial.lisp or fibonacci.lisp.
 
-;;There still may be a few changes that I'll add to make this more Lispy, but
-;;for now, try doing 1000!; it has ~2500 digits in it and is awesome!
+;; Maybe one day I'll just some macros to use the standard *, +, - symbols.
+
+
+
+;;; General ;;;
+
+;;Converts a regular whole number into a listed version.
+;;For example, 123 -> '(1 2 3)
+(defun convert-to-list (number)
+  (if (> number 0)
+      (append (convert-to-list (floor number 10)) (list (mod number 10)))
+      nil))
 
 ;; Fix any digits that are over 9.
 ;; This function is quite complicated; however, with some thought, it can be
@@ -23,22 +31,7 @@
 		  (cons lsd (digit-fixer (cons new-next-elem (cdr rest-of-list)))))))
 	  (if end-of-list
 	      (list cur-elem)
-	      (cons cur-elem (digit-fixer rest-of-list)))))))
-
-;;Converts a regular whole number into a listed version.
-;;For example, 123 -> '(1 2 3)
-(defun convert-to-list (number)
-  (if (> number 0)
-      (append (convert-to-list (floor number 10)) (list (mod number 10)))
-      nil))
-
-
-;;Used to increment one of the numbers
-(defun increment(number-list)
-  (let ((reversed-list (reverse number-list)))
-    (let ((elem-to-increment (car reversed-list)) (rest-of-list (cdr reversed-list)))
-      (reverse (digit-fixer (cons (+ elem-to-increment 1) rest-of-list))))))
-  
+	      (cons cur-elem (digit-fixer rest-of-list)))))))  
 
 ;;Compares each element in a list
 ;;If the first number is bigger pass nil, if second number is bigger pass t
@@ -65,6 +58,8 @@
 	  (t
 	   (compare-digits fir-num sec-num 0)))))
 
+
+;;; Multiplication ;;;
 
 ;;Adds zeros the front and back of the list being multiplied
 ;;This prevents errors like: "NIL is not a number"
@@ -125,14 +120,28 @@
 (defun multiply(fir-num sec-num)
   (let ((pad-fir-num (pad-with-zeros fir-num (* 2 (- (length sec-num) 1)))))
     (reverse (digit-fixer (reverse (multiply-loop pad-fir-num (reverse sec-num) 0 (- (length sec-num) 1)))))))
-  
-
-;;computes the factorial of the number fir-num (in list form)
-(defun take-factorial(fir-num sec-num z)
-  (if (compare fir-num sec-num)
-      z
-      (take-factorial fir-num (increment sec-num) (multiply z sec-num))))
 
 
-(defun factorial(f)
-  (take-factorial (convert-to-list f) '(2) '(1)))
+
+;;; Addition ;;;
+
+;; This function is also used in subtraction
+;; Pads the front of the smaller number with zeros so we can do addition easier.
+;; For example: 123 + 12, would be 123 + 012
+(defun pad-front (list-to-pad num-zeros)
+  (if (equal 0 num-zeros)
+      list-to-pad
+      (cons 0 (pad-front list-to-pad (- num-zeros 1)))))
+
+(defun add-loop (fir-num sec-num)
+  (if (null fir-num)			;both go null at the same time
+      nil
+      (let ((fir-digit (car fir-num)) (sec-digit (car sec-num)))
+	(cons (+ fir-digit sec-digit) (add-loop (cdr fir-num) (cdr sec-num))))))
+
+;; Adds digit by digit
+(defun addition (fir-num sec-num)	;where fir- and sec-num are list numbers
+  (let ((len-fir (length fir-num)) (len-sec (length sec-num)))
+    (let ((pad-sec-num (pad-front sec-num (- len-fir len-sec))))
+      (reverse
+       (digit-fixer (add-loop (reverse fir-num) (reverse pad-sec-num)))))))
