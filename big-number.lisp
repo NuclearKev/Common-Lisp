@@ -147,6 +147,12 @@
        (digit-fixer (add-loop (reverse fir-num) (reverse pad-sec-num)))))))
 
 ;;; Subtraction ;;;
+
+;; This function does all the carrying. It works like this:
+;; Subtract-loop would do '(1 1 1) - '(9 9) = '(1 -8 -8)
+;; Then if the element is negative we add 10 to it and subtract 1 from
+;; the element before it; like so:
+;; '(1 -8 -8) => '(1 -9 2) => '(0 1 2)
 (defun carry-fix (number-list)
   (if (null number-list)
       nil
@@ -157,6 +163,14 @@
 		(cons (car new-number-list) (carry-fix (cdr new-number-list)))))
 	    (cons cur-digit (carry-fix (cdr number-list)))))))
 
+;; Since the carry-fix leaves leading zeros, we must remove them!
+(defun remove-leading-zeros (number-list)
+  (let ((poss-zero (car number-list)))	;an element that might possibly be a zero
+    (if (equal 0 poss-zero)
+	(remove-leading-zeros (cdr number-list))
+	number-list)))
+
+;; Subtracts the numbers, digit by digit. It obviously doesn't do the carrying
 (defun subtract-loop (fir-num sec-num)
   (if (null fir-num)			;they are null at the same time
       nil
@@ -166,5 +180,5 @@
 (defun subtract (fir-num sec-num)
   (let ((len-fir (length fir-num)) (len-sec (length sec-num)))
     (let ((pad-sec-num (pad-front sec-num (- len-fir len-sec))))
-      (reverse
-       (carry-fix (subtract-loop (reverse fir-num) (reverse pad-sec-num)))))))
+      (remove-leading-zeros (reverse
+			     (carry-fix (subtract-loop (reverse fir-num) (reverse pad-sec-num))))))))
