@@ -178,10 +178,12 @@
 	(cons (- fir-digit sec-digit) (subtract-loop (cdr fir-num) (cdr sec-num))))))
   
 (defun subtract (fir-num sec-num)
-  (let ((len-fir (length fir-num)) (len-sec (length sec-num)))
-    (let ((pad-sec-num (pad-front sec-num (- len-fir len-sec))))
-      (remove-leading-zeros (reverse
-			     (carry-fix (subtract-loop (reverse fir-num) (reverse pad-sec-num))))))))
+  (if (equal fir-num sec-num)
+      '(0)
+      (let ((len-fir (length fir-num)) (len-sec (length sec-num)))
+	(let ((pad-sec-num (pad-front sec-num (- len-fir len-sec))))
+	  (remove-leading-zeros (reverse
+				 (carry-fix (subtract-loop (reverse fir-num) (reverse pad-sec-num)))))))))
 
 ;;; Division ;;;
 
