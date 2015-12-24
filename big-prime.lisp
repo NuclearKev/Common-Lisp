@@ -31,19 +31,24 @@
       '(1)
       (mod-divide-loop dividend divisor (list (car divisor)) '(0))))
 
-(defun prime-finder (list-number factor)
-  (if (equal list-number factor)
+(defun prime-finder (list-number factor limit) ;limit is half the value of the list-number
+  (if (equal limit factor)
       t
       (if (equal '(0) (mod-divide factor list-number))
 	  nil
-	  (prime-finder list-number (addition factor '(1))))))
+	  (prime-finder list-number (addition factor '(1)) limit))))
 
 (defun big-prime-loop (cur-num cur-prime-num pos l) ;l is a loop variable
   (if (equal pos l)
       cur-prime-num
-      (if (prime-finder cur-num '(2))
+      (if (prime-finder cur-num '(2) (divide '(2) cur-num))
 	  (big-prime-loop (addition cur-num '(1)) cur-num pos (+ l 1)) ;only increment loop when it IS prime
 	  (big-prime-loop (addition cur-num '(1)) cur-prime-num pos l))))
 
 (defun big-prime (position)
-  (big-prime-loop '(3) '(2) position 1))
+  (cond ((equal 1 position)
+	 '(2))
+	((equal 2 position)
+	 '(3))
+	(t
+	 (big-prime-loop '(6) '(5) position 3))))

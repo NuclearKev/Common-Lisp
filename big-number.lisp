@@ -200,12 +200,12 @@
 (defun divide-loop (dividend divisor cur-div)
   (if (null divisor)
       nil
-      (let ((rest-of-div (cdr divisor)))
-	(if (compare dividend cur-div)	;t when cur-div is bigger
-	    (let ((quotient (find-quotient dividend cur-div '(1))))
+      (let ((rest-of-div (cdr divisor)) (no-zero-cur-div (remove-leading-zeros cur-div)))
+	(if (compare dividend no-zero-cur-div)	;t when cur-div is bigger
+	    (let ((quotient (find-quotient dividend no-zero-cur-div '(1))))
 	      (append quotient (divide-loop dividend rest-of-div
-					  (append (subtract cur-div (multiply dividend quotient)) (list (cadr divisor))))))
-	    (cons 0 (divide-loop dividend rest-of-div (append cur-div (list (cadr divisor)))))))))
+					  (append (subtract no-zero-cur-div (multiply dividend quotient)) (list (cadr divisor))))))
+	    (cons 0 (divide-loop dividend rest-of-div (append no-zero-cur-div (list (cadr divisor)))))))))
 	    
 
 (defun divide (dividend divisor)
