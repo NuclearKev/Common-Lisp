@@ -92,3 +92,4 @@
 	      (y (imagpart c)))
 	  (write-to-file "langton.out" x y)
 	  (graph-lang (cdr blacklist))))))
+

@@ -64,9 +64,7 @@
       (if (equal '(0) (mod-divide factor list-number))
 	  nil
 	  (let ((new-limit (divide factor list-number)))
-	    (if (equal factor new-limit)
-		t
-		(prime-finder list-number (addition factor '(2)) new-limit))))))
+	    (prime-finder list-number (addition factor '(2)) new-limit)))))
 
 ;; If we have counted "pos" amounts of primes, we have made it to the prime we want!
 ;; We check to see if the number is divisible by 2, if so, we already know it isn't
