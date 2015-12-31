@@ -20,7 +20,7 @@
   (let ((next-cur-num (+ 1 cur-num)))
     (cond ((equal pos l)
 	   cur-prime-num)
-	  ((equal 0 (mod cur-num 2))
+	  ((evenp cur-num)		;if even, it's not prime
 	   (prime-loop next-cur-num cur-prime-num pos l))
 	  ((prime-finder cur-num 3 cur-num)
 	   (prime-loop next-cur-num cur-num pos (+ 1 l)))
@@ -35,5 +35,3 @@
 	 3)
 	(t
 	 (prime-loop 6 5 position 3))))
-	 
-    

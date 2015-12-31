@@ -2,7 +2,7 @@
 ;;; natural number. You can also calculate the lowest number with a given number
 ;;; of steps using the collatz-reverse function
 (defun even-or-odd (x)
-  (if (equal 0 (mod x 2))
+  (if (evenp x)
       (/ x 2)
       (+ 1 (* 3 x))))
 
