@@ -35,7 +35,7 @@
 
 ;;Compares each element in a list
 ;;If the first number is bigger pass nil, if second number is bigger pass t
-(defun compare-digits(fir-num sec-num pos) ;pos is the current position
+(defun compare-digits (fir-num sec-num pos) ;pos is the current position
   (let ((nth-fir-num (nth pos fir-num)) (nth-sec-num (nth pos sec-num)))
     (if (equal pos (length fir-num))
 	nil
@@ -49,7 +49,7 @@
 
 ;;Compares the lengths of the lists and calls compare-digits if they are of
 ;;equal length.
-(defun compare(fir-num sec-num)
+(defun compare (fir-num sec-num)
   (let ((len-fir-num (length fir-num)) (len-sec-num (length sec-num)))
     (cond ((> len-fir-num len-sec-num)
 	   nil)
@@ -64,7 +64,7 @@
 ;;Adds zeros the front and back of the list being multiplied
 ;;This prevents errors like: "NIL is not a number"
 ;;The number of zeros added: 2((length y) - 1)
-(defun pad-with-zeros(num-list n)	;n is a loop variable
+(defun pad-with-zeros (num-list n)	;n is a loop variable
   (if (> n 0)
       (pad-with-zeros (cons 0 (reverse num-list)) (- n 1))
       num-list))
@@ -101,7 +101,7 @@
 
 ;;This function multiplies the current digits in position 'n' and adds them into
 ;;the temp-buffer, which is then returned back to multiply-loop
-(defun multiply-digits(fir-num sec-num n i temp-buffer) ;n is current position, i is a loop variable
+(defun multiply-digits (fir-num sec-num n i temp-buffer) ;n is current position, i is a loop variable
   (if (equal i (length sec-num))
       temp-buffer
       (multiply-digits fir-num sec-num (+ 1 n) (+ 1 i) 
@@ -110,14 +110,14 @@
 
 ;;This function basically conses the result list with the output from the
 ;;multiply-digits function, then calls itself with a new position (n)
-(defun multiply-loop(fir-num sec-num n i)
+(defun multiply-loop (fir-num sec-num n i)
   (if (equal n (- (length fir-num) (- (length sec-num) 1)))
       nil
       (cons (multiply-digits fir-num sec-num n 0 0) (multiply-loop fir-num sec-num (+ 1 n) i))))
 
 
 ;;must be called before the multiply-loop function (this is a setup function) 
-(defun multiply(fir-num sec-num)
+(defun multiply (fir-num sec-num)
   (let ((pad-fir-num (pad-with-zeros fir-num (* 2 (- (length sec-num) 1)))))
     (reverse (digit-fixer (reverse (multiply-loop pad-fir-num (reverse sec-num) 0 (- (length sec-num) 1)))))))
 
