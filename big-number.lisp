@@ -13,9 +13,9 @@
 ;;Converts a regular whole number into a listed version.
 ;;For example, 123 -> '(1 2 3)
 (defun convert-to-list (number)
-  (if (> number 0)
-      (append (convert-to-list (floor number 10)) (list (mod number 10)))
-      nil))
+  (when (> number 0)
+    (append (convert-to-list (floor number 10)) (list (mod number 10)))))
+
 
 ;; Fix any digits that are over 9.
 ;; This function is quite complicated; however, with some thought, it can be
@@ -37,14 +37,13 @@
 ;;If the first number is bigger pass nil, if second number is bigger pass t
 (defun compare-digits (fir-num sec-num pos) ;pos is the current position
   (let ((nth-fir-num (nth pos fir-num)) (nth-sec-num (nth pos sec-num)))
-    (if (equal pos (length fir-num))
-	nil
-	(cond ((> nth-fir-num nth-sec-num)
-	       nil)
-	      ((< nth-fir-num nth-sec-num)
-	       t)
-	      (t
-	       (compare-digits fir-num sec-num (+ 1 pos)))))))
+    (unless (equal pos (length fir-num))
+      (cond ((> nth-fir-num nth-sec-num)
+	     nil)
+	    ((< nth-fir-num nth-sec-num)
+	     t)
+	    (t
+	     (compare-digits fir-num sec-num (+ 1 pos)))))))
 
 
 ;;Compares the lengths of the lists and calls compare-digits if they are of
@@ -65,9 +64,10 @@
 ;;This prevents errors like: "NIL is not a number"
 ;;The number of zeros added: 2((length y) - 1)
 (defun pad-with-zeros (num-list n)	;n is a loop variable
-  (if (> n 0)
-      (pad-with-zeros (cons 0 (reverse num-list)) (- n 1))
-      num-list))
+  (cond ((> n 0)
+	 (pad-with-zeros (cons 0 (reverse num-list)) (- n 1)))
+	(t
+	 num-list)))
 
 
 ;;Actually does the multiplication.
@@ -111,8 +111,7 @@
 ;;This function basically conses the result list with the output from the
 ;;multiply-digits function, then calls itself with a new position (n)
 (defun multiply-loop (fir-num sec-num n i)
-  (if (equal n (- (length fir-num) (- (length sec-num) 1)))
-      nil
+  (unless (equal n (- (length fir-num) (- (length sec-num) 1)))
       (cons (multiply-digits fir-num sec-num n 0 0) (multiply-loop fir-num sec-num (+ 1 n) i))))
 
 
@@ -134,10 +133,9 @@
       (cons 0 (pad-front list-to-pad (- num-zeros 1)))))
 
 (defun add-loop (fir-num sec-num)
-  (if (null fir-num)			;both go null at the same time
-      nil
-      (let ((fir-digit (car fir-num)) (sec-digit (car sec-num)))
-	(cons (+ fir-digit sec-digit) (add-loop (cdr fir-num) (cdr sec-num))))))
+  (unless (null fir-num)			;both go null at the same time
+    (let ((fir-digit (car fir-num)) (sec-digit (car sec-num)))
+      (cons (+ fir-digit sec-digit) (add-loop (cdr fir-num) (cdr sec-num))))))
 
 ;; Adds digit by digit
 (defun addition (fir-num sec-num)	;where fir- and sec-num are list numbers
@@ -154,14 +152,13 @@
 ;; the element before it; like so:
 ;; '(1 -8 -8) => '(1 -9 2) => '(0 1 2)
 (defun carry-fix (number-list)
-  (if (null number-list)
-      nil
-      (let ((cur-digit (car number-list)) (carried-digit (cadr number-list))) ;carried-digit may or may not be carried
-	(if (> 0 cur-digit)
-	    (let ((temp-list (list (+ cur-digit 10) (- carried-digit 1))))
-	      (let ((new-number-list (append temp-list (cddr number-list))))
-		(cons (car new-number-list) (carry-fix (cdr new-number-list)))))
-	    (cons cur-digit (carry-fix (cdr number-list)))))))
+  (unless (null number-list)
+    (let ((cur-digit (car number-list)) (carried-digit (cadr number-list))) ;carried-digit may or may not be carried
+      (if (> 0 cur-digit)
+	  (let ((temp-list (list (+ cur-digit 10) (- carried-digit 1))))
+	    (let ((new-number-list (append temp-list (cddr number-list))))
+	      (cons (car new-number-list) (carry-fix (cdr new-number-list)))))
+	  (cons cur-digit (carry-fix (cdr number-list)))))))
 
 ;; Since the carry-fix leaves leading zeros, we must remove them!
 (defun remove-leading-zeros (number-list)
@@ -172,10 +169,9 @@
 
 ;; Subtracts the numbers, digit by digit. It obviously doesn't do the carrying
 (defun subtract-loop (fir-num sec-num)
-  (if (null fir-num)			;they are null at the same time
-      nil
-      (let ((fir-digit (car fir-num)) (sec-digit (car sec-num)))
-	(cons (- fir-digit sec-digit) (subtract-loop (cdr fir-num) (cdr sec-num))))))
+  (unless (null fir-num)			;they are null at the same time
+    (let ((fir-digit (car fir-num)) (sec-digit (car sec-num)))
+      (cons (- fir-digit sec-digit) (subtract-loop (cdr fir-num) (cdr sec-num))))))
   
 (defun subtract (fir-num sec-num)
   (if (equal fir-num sec-num)
@@ -191,21 +187,21 @@
 ;; current slice of the divisor.
 (defun find-quotient (dividend current-divisor possible-quo)
   (let ((subtracter (multiply dividend possible-quo)))
-    (if (compare subtracter current-divisor) ;t when current-divisor is bigger
-	(find-quotient dividend current-divisor (addition possible-quo '(1)))
-	(if (equal subtracter current-divisor)
-	    possible-quo
-	    (subtract possible-quo '(1))))))
+    (cond ((compare subtracter current-divisor) ;t when current-divisor is bigger
+	   (find-quotient dividend current-divisor (addition possible-quo '(1))))
+	  ((equal subtracter current-divisor)
+	   possible-quo)
+	  (t
+	   (subtract possible-quo '(1))))))
   
 (defun divide-loop (dividend divisor cur-div)
-  (if (null divisor)
-      nil
-      (let ((rest-of-div (cdr divisor)) (no-zero-cur-div (remove-leading-zeros cur-div)))
-	(if (compare dividend no-zero-cur-div)	;t when cur-div is bigger
-	    (let ((quotient (find-quotient dividend no-zero-cur-div '(1))))
-	      (append quotient (divide-loop dividend rest-of-div
+  (unless (null divisor)
+    (let ((rest-of-div (cdr divisor)) (no-zero-cur-div (remove-leading-zeros cur-div)))
+      (if (compare dividend no-zero-cur-div)	;t when cur-div is bigger
+	  (let ((quotient (find-quotient dividend no-zero-cur-div '(1))))
+	    (append quotient (divide-loop dividend rest-of-div
 					  (append (subtract no-zero-cur-div (multiply dividend quotient)) (list (cadr divisor))))))
-	    (cons 0 (divide-loop dividend rest-of-div (append no-zero-cur-div (list (cadr divisor)))))))))
+	  (cons 0 (divide-loop dividend rest-of-div (append no-zero-cur-div (list (cadr divisor)))))))))
 	    
 
 (defun divide (dividend divisor)
