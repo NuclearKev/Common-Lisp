@@ -23,15 +23,16 @@
 (defun digit-fixer (org-list)
   (let ((cur-elem (car org-list)) (rest-of-list (cdr org-list)))
     (let ((end-of-list (null rest-of-list)))
-      (if (> cur-elem 9)
-	  (let ((msd (floor cur-elem 10)) (lsd (mod cur-elem 10)))
-	    (if end-of-list
-		(list lsd msd)
-		(let ((new-next-elem (+ msd (car rest-of-list))))
-		  (cons lsd (digit-fixer (cons new-next-elem (cdr rest-of-list)))))))
-	  (if end-of-list
-	      (list cur-elem)
-	      (cons cur-elem (digit-fixer rest-of-list)))))))  
+      (cond ((> cur-elem 9)
+	     (let ((msd (floor cur-elem 10)) (lsd (mod cur-elem 10)))
+	       (if end-of-list
+		   (list lsd msd)
+		   (let ((new-next-elem (+ msd (car rest-of-list))))
+		     (cons lsd (digit-fixer (cons new-next-elem (cdr rest-of-list))))))))
+	    (end-of-list
+	     (list cur-elem))
+	    (t
+	     (cons cur-elem (digit-fixer rest-of-list)))))))
 
 ;;Compares each element in a list
 ;;If the first number is bigger pass nil, if second number is bigger pass t
