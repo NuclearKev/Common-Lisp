@@ -2,7 +2,7 @@
 
 ;; I made this to rebel against my Control Theory Prof...
 
-;; Current bug: -1 on first term.
+;; Current bug: -1 on first term. 
 
 ;; Very very very ugly function
 (defun make-pretty (final-list order)	;length - 1 = order of polynomial
@@ -12,13 +12,13 @@
       (cond ((equal 1 order)
 	     (if (equal 1 coef)
 		 (format t " x ")
-		 (format t " ~dx " (car final-list))))
+		 (format t " ~dx " coef)))
 	    ((equal 0 order)
-	     (format t " ~d" (car final-list)))
+	     (format t " ~d" coef))
 	    (t
 	     (if (equal 1 coef)
 		 (format t " x^~d " order)
-		 (format t " ~dx^~d " (car final-list) order))))
+		 (format t " ~dx^~d " coef order))))
       (cond ((null next-coef)
 	     (format t " ")
 	     (make-pretty  (cdr final-list) (- order 1)))
