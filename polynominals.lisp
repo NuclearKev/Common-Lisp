@@ -2,7 +2,20 @@
 
 ;; I made this to rebel against my Control Theory Prof...
 
-;; Current bug: -1 on first term. 
+;; Current bug: -1 on first term.
+
+(defun sign-finder (number)
+  (cond ((null number)
+	 (format t " ")
+	 nil)
+	((equal 0 number)
+	 0)
+	((> 0 number)
+	 (format t "-")
+	 -1)
+	(t
+	 (format t "+")
+	 1)))
 
 ;; Very very very ugly function
 (defun make-pretty (final-list order)	;length - 1 = order of polynomial
@@ -19,16 +32,12 @@
 	     (if (equal 1 coef)
 		 (format t " x^~d " order)
 		 (format t " ~dx^~d " coef order))))
-      (cond ((null next-coef)
-	     (format t " ")
-	     (make-pretty  (cdr final-list) (- order 1)))
-	    ((> 0 next-coef);is the next term negative
-	     (format t "-")
-	     (make-pretty  (cons (abs next-coef) (cddr final-list)) (- order 1)))
-	    (t
-	     (format t "+")
-	     (make-pretty  (cdr final-list) (- order 1)))))))
-
+      (case (sign-finder next-coef)
+	((nil) (make-pretty  (cdr final-list) (- order 1)))
+	((0)   (sign-finder (caddr final-list))
+	 (make-pretty (cons (abs next-coef) (cddr final-list)) (- order 2)))
+	((-1)  (make-pretty  (cons (abs next-coef) (cddr final-list)) (- order 1)))
+	((1)   (make-pretty  (cdr final-list) (- order 1)))))))
 
 (defun foil (x poly2)
   (unless (null poly2)
