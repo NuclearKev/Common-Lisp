@@ -2,7 +2,7 @@
 
 ;; I made this to rebel against my Control Theory Prof...
 
-;; Current bug: -1 on first term.
+;; Current bug: Negatives and zeros aren't working properly (beware!)
 
 (defun sign-finder (number)
   (cond ((null number)
@@ -26,8 +26,8 @@
 	     (if (equal 1 coef)
 		 (format t " x ")
 		 (format t " ~dx " coef)))
-	    ((equal 0 order)
-	     (format t " ~d" coef))
+	    ((> 1 order)
+	     (format t " ~d " coef))
 	    (t
 	     (if (equal 1 coef)
 		 (format t " x^~d " order)
@@ -35,7 +35,7 @@
       (case (sign-finder next-coef)
 	((nil) (make-pretty  (cdr final-list) (- order 1)))
 	((0)   (sign-finder (caddr final-list))
-	 (make-pretty (cons (abs next-coef) (cddr final-list)) (- order 2)))
+	 (make-pretty (cons (abs next-coef) (cddr final-list)) (- order 1)))
 	((-1)  (make-pretty  (cons (abs next-coef) (cddr final-list)) (- order 1)))
 	((1)   (make-pretty  (cdr final-list) (- order 1)))))))
 
