@@ -17,7 +17,7 @@
 	 (format t "+")
 	 1)))
 
-;; Very very very ugly function
+;; Very very very ugly function DOES NOT WORK FULLY!
 (defun make-pretty (final-list order)	;length - 1 = order of polynomial
   (unless (null final-list)
     (let ((coef (car final-list))
@@ -66,3 +66,17 @@
 (defun multiply-polynomials (poly1 poly2)
   (let ((ugly-ass-list (adding-loop (polynomial-multiply poly1 poly2))))
     (make-pretty ugly-ass-list (- (length ugly-ass-list) 1)))) ;order = length - 1
+
+(defun possible-factor (new-coeffs)
+  (if (null new-coeffs)
+      t
+      (let ((cur-coeff (car new-coeffs))
+	    (rest-of (cdr new-coeffs)))
+	(when (equal 0 cur-coeff)
+	  (possible-factor rest-of)))))
+
+(defun factor-constant (polynomial factee)
+  (let ((mod-of-poly (mapcar #'(lambda (x) (mod x factee)) polynomial)))
+    (if (possible-factor mod-of-poly)
+	(mapcar #'(lambda (x) (/ x factee)) polynomial)
+	polynomial)))
