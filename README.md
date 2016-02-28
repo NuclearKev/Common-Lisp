@@ -1,6 +1,6 @@
 # Common-Lisp
 
-# Some of the programs in this repo are not originally written by me. The following were games (or programs) that we taught in the amazing book The Land of Lisp:
+## Some of the programs in this repo are not originally written by me. The following were games (or programs) that we taught in the amazing book The Land of Lisp:
 
 * attack-of-the-robots.lisp
 
