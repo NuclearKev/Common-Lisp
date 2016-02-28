@@ -39,6 +39,8 @@
 	((-1)  (make-pretty  (cons (abs next-coef) (cddr final-list)) (- order 1)))
 	((1)   (make-pretty  (cdr final-list) (- order 1)))))))
 
+;;; Multiplying ;;;
+
 (defun foil (x poly2)
   (unless (null poly2)
     (let ((y (car poly2)))
@@ -67,6 +69,8 @@
   (let ((ugly-ass-list (adding-loop (polynomial-multiply poly1 poly2))))
     (make-pretty ugly-ass-list (- (length ugly-ass-list) 1)))) ;order = length - 1
 
+;;; Factoring ;;;
+
 (defun possible-factor (new-coeffs)
   (if (null new-coeffs)
       t
@@ -76,7 +80,27 @@
 	  (possible-factor rest-of)))))
 
 (defun factor-constant (polynomial factee)
-  (let ((mod-of-poly (mapcar #'(lambda (x) (mod x factee)) polynomial)))
-    (if (possible-factor mod-of-poly)
-	(mapcar #'(lambda (x) (/ x factee)) polynomial)
-	polynomial)))
+  (mapcar #'(lambda (x) (/ x factee)) polynomial))
+
+(defun try-factors (polynomial smallest-coeff factee possible-factor)
+  (let ((is-factor (possible-factor (mapcar #'(lambda (x) (mod x factee)) polynomial))))
+    (cond ((and (not is-factor) (equal smallest-coeff factee)) ;if the current factee is not a factor
+	   (factor-constant polynomial possible-factor))
+	  ((and is-factor (equal smallest-coeff factee)) ;if the current factee is a factor
+	   (factor-constant polynomial factee))
+	  (is-factor
+	   (try-factors polynomial smallest-coeff (+ 1 factee) factee))
+	  (t
+	   (try-factors polynomial smallest-coeff (+ 1 factee) possible-factor)))))
+
+(defun find-smallest-coefficient (polynomial smallest) ;you want to make smallest huge to start
+  (if (null polynomial)
+      smallest
+      (let ((x (car polynomial))
+	    (rest-of-poly (cdr polynomial)))
+	(if (> x smallest)
+	    (find-smallest-coefficient rest-of-poly smallest)
+	    (find-smallest-coefficient rest-of-poly x)))))
+
+(defun factor-polynomial (polynomial)
+  (try-factors polynomial (find-smallest-coefficient polynomial 100000) 1 nil))
