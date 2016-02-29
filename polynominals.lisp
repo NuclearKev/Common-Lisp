@@ -84,7 +84,7 @@
 
 (defun try-factors (polynomial smallest-coeff factee possible-factor)
   (let ((is-factor (possible-factor
-		    (mapcar #'(lambda (x) (mod x factee)) polynomial)))) ;functional!
+		    (mapcar #'(lambda (x) (mod x factee)) polynomial))))
     (cond ((and (not is-factor) (equal smallest-coeff factee)) ;if the current factee is not a factor
 	   (factor-constant polynomial possible-factor))
 	  ((and is-factor (equal smallest-coeff factee)) ;if the current factee is a factor
