@@ -83,7 +83,8 @@
   (mapcar #'(lambda (x) (/ x factee)) polynomial))
 
 (defun try-factors (polynomial smallest-coeff factee possible-factor)
-  (let ((is-factor (possible-factor (mapcar #'(lambda (x) (mod x factee)) polynomial))))
+  (let ((is-factor (possible-factor
+		    (mapcar #'(lambda (x) (mod x factee)) polynomial)))) ;functional!
     (cond ((and (not is-factor) (equal smallest-coeff factee)) ;if the current factee is not a factor
 	   (factor-constant polynomial possible-factor))
 	  ((and is-factor (equal smallest-coeff factee)) ;if the current factee is a factor
@@ -102,5 +103,12 @@
 	    (find-smallest-coefficient rest-of-poly smallest)
 	    (find-smallest-coefficient rest-of-poly x)))))
 
-(defun factor-polynomial (polynomial)
+(defun factor-constant-polynomial (polynomial)
   (try-factors polynomial (find-smallest-coefficient polynomial 100000) 1 nil))
+
+;; Unfinished
+(defun factor-variable-polynomial (polynomial)
+  (let ((last-term (car (reverse polynomial))))
+    (if (equal 0 last-term)
+	(reverse (cdr (reverse polynomial)))
+	(princ "Cannot factor"))))
