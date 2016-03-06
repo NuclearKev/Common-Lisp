@@ -112,9 +112,11 @@
 
 ;; Only works for polynomials of the form:
 ;; ax^n + bx^n-1 + ... + cx, if there are any other zeros, it will recurse forever!
-(defun factor-variable-polynomial (polynomial)
-  (let ((last-term (car (reverse polynomial)))
-	(no-zero-poly (reverse (cdr (reverse polynomial))))) ;remove the zero
-    (when (equal 0 last-term)
-      (let ((factored-poly (factor-constant-polynomial no-zero-poly)))
-	(cons *factee* `(,factored-poly)))))) ;quasiquoting!
+(defun factor-terms-polynomial (polynomial)
+  (let ((last-term (car (reverse polynomial))))
+    (if (equal 0 last-term)
+	(let ((no-zero-poly (reverse (cdr (reverse polynomial))))) ;remove the zero
+	  (let ((factored-poly (factor-constant-polynomial no-zero-poly)))
+	    (append `(,*factee* 0) `(,factored-poly)))) ;quasiquoting!
+	(let ((factored-poly (factor-constant-polynomial polynomial))) ;just factor a constant
+	  (cons *factee* `(,factored-poly)))))) ;more quasiquoting!
