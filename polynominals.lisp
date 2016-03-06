@@ -130,3 +130,5 @@
       (if (listp cur-elem)
 	  cur-elem
 	  (extract-poly (cdr semi-factored-poly))))))
+
+(defun factor-cruncher (polynomial possible-solution solution))
