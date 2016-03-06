@@ -83,7 +83,9 @@
 
 ;; Just for readability
 (defun factor-constant (polynomial factee)
-  (setf *factee* factee)
+  (if (equal 1 factee)
+      (setf *factee* nil)
+      (setf *factee* factee))
   (mapcar (lambda (x) (/ x factee)) polynomial))
 
 (defun try-factors (polynomial smallest-coeff factee possible-factor)
@@ -119,4 +121,12 @@
 	  (let ((factored-poly (factor-constant-polynomial no-zero-poly)))
 	    (append `(,*factee* 0) `(,factored-poly)))) ;quasiquoting!
 	(let ((factored-poly (factor-constant-polynomial polynomial))) ;just factor a constant
-	  (cons *factee* `(,factored-poly)))))) ;more quasiquoting!
+	  (append `(,*factee*) `(,factored-poly)))))) ;more quasiquoting!
+
+;; Remove the factored constant/variable from the front
+(defun extract-poly (semi-factored-poly)
+  (unless (null semi-factored-poly)
+    (let ((cur-elem (car semi-factored-poly)))
+      (if (listp cur-elem)
+	  cur-elem
+	  (extract-poly (cdr semi-factored-poly))))))
