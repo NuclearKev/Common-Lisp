@@ -79,7 +79,11 @@
 	(when (equal 0 cur-coeff)
 	  (possible-factor rest-of)))))
 
+(defparameter *factee* nil)		;used for coeff of factored variable
+
+;; Just for readability
 (defun factor-constant (polynomial factee)
+  (setf *factee* factee)
   (mapcar (lambda (x) (/ x factee)) polynomial))
 
 (defun try-factors (polynomial smallest-coeff factee possible-factor)
@@ -106,9 +110,11 @@
 (defun factor-constant-polynomial (polynomial)
   (try-factors polynomial (find-smallest-coefficient polynomial 100000) 1 nil))
 
-;; Unfinished
+;; Only works for polynomials of the form:
+;; ax^n + bx^n-1 + ... + cx, if there are any other zeros, it will recurse forever!
 (defun factor-variable-polynomial (polynomial)
-  (let ((last-term (car (reverse polynomial))))
-    (if (equal 0 last-term)
-	(reverse (cdr (reverse polynomial)))
-	(princ "Cannot factor"))))
+  (let ((last-term (car (reverse polynomial)))
+	(no-zero-poly (reverse (cdr (reverse polynomial))))) ;remove the zero
+    (when (equal 0 last-term)
+      (let ((factored-poly (factor-constant-polynomial no-zero-poly)))
+	(cons *factee* `(,factored-poly)))))) ;quasiquoting!
