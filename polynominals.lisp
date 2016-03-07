@@ -131,4 +131,23 @@
 	  cur-elem
 	  (extract-poly (cdr semi-factored-poly))))))
 
-(defun factor-cruncher (polynomial possible-solution solution))
+(defun plug-and-chug (polynomial pos-sol)
+  (if (null polynomial)
+      0
+      (let ((cur-term (car polynomial))
+	    (order (- (length polynomial) 1)))
+	(+ (* cur-term (expt pos-sol order)) (plug-and-chug
+					      (cdr polynomial) pos-sol)))))
+
+(defun solution-checker (polynomial solution order)
+  (unless (or (equal 0 order) (> solution 1000))
+    (let ((is-solution (plug-and-chug polynomial solution)))
+      (if (= 0 is-solution)		; I use "=" cuz it could be 0.0 or 0
+	  (cons solution (solution-checker
+			  polynomial (+ solution 1) (- order 1)))
+	  (solution-checker polynomial (+ solution 1) order)))))
+
+;; Can only factor real, integer solutions as of now
+;; Works for any order polynominal too!
+(defun factor-reals (polynomial)
+  (solution-checker polynomial -1000 (- (length polynomial) 1)))
