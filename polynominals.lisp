@@ -2,7 +2,10 @@
 
 ;; I made this to rebel against my Control Theory Prof...
 
-;; Current bug: Negatives and zeros aren't working properly (beware!)
+;; Status: Don't use the make-pretty function. You can multiply polynomials of
+;; any size together and you'll get the answer in list form. You can also factor
+;; constants and a singular variable out. You can also solve any polynomial for
+;; any real integer solutions. Yay! There is more to come!
 
 (defun sign-finder (number)
   (cond ((null number)
@@ -150,4 +153,4 @@
 ;; Can only factor real, integer solutions as of now
 ;; Works for any order polynominal too!
 (defun factor-reals (polynomial)
-  (solution-checker polynomial -1000 (- (length polynomial) 1)))
+  (solution-checker polynomial -1000.0 (- (length polynomial) 1)))
