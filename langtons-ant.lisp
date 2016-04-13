@@ -15,7 +15,7 @@
 ;;3 points, (1,1), (2,3), and (3, 0). Enjoy.
 
 ;;You'd want to change this to where ever your gnuplot-out.lisp is
-(load "/home/kevin/development/lisp/Common-Lisp/gnuplot-out.lisp")
+(load "/home/kdb/code/common-lisp/gnuplot-out.lisp")
 
 ;;Checks to see if the current position is a black one
 (defun check-black (cur-pos black-spaces)
@@ -83,7 +83,8 @@
 
 ;;You want to pass the start function to this.
 ;;The "write-to-file" function is found in the gnuplot-out.lisp program
-;;Please note: You *must* run (new-file "foo.out") before running this function.
+;;Please note: You *must* run (new-file "langton.out") before running this
+;;function.
 (defun graph-lang (blacklist)
   (if (null blacklist)
       'all-done
