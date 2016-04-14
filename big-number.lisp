@@ -4,9 +4,7 @@
 ;; to add, subtract, multiply, and divide them. To see it in action, check out
 ;; my other programs factorial.lisp or fibonacci.lisp.
 
-;; Maybe one day I'll just some macros to use the standard *, +, - symbols.
-
-
+;; Maybe one day I'll add some macros to use the standard *, +, - symbols.
 
 ;;; General ;;;
 
@@ -21,23 +19,27 @@
 ;; This function is quite complicated; however, with some thought, it can be
 ;; figured out.
 (defun digit-fixer (org-list)
-  (let ((cur-elem (car org-list)) (rest-of-list (cdr org-list)))
+  (let ((cur-elem (car org-list))
+	(rest-of-list (cdr org-list)))
     (let ((end-of-list (null rest-of-list)))
       (cond ((> cur-elem 9)
-	     (let ((msd (floor cur-elem 10)) (lsd (mod cur-elem 10)))
+	     (let ((msd (floor cur-elem 10))
+		   (lsd (mod cur-elem 10)))
 	       (if end-of-list
 		   (list lsd msd)
 		   (let ((new-next-elem (+ msd (car rest-of-list))))
-		     (cons lsd (digit-fixer (cons new-next-elem (cdr rest-of-list))))))))
+		     (cons lsd (digit-fixer
+				(cons new-next-elem (cdr rest-of-list))))))))
 	    (end-of-list
 	     (list cur-elem))
 	    (t
 	     (cons cur-elem (digit-fixer rest-of-list)))))))
 
-;;Compares each element in a list
-;;If the first number is bigger pass nil, if second number is bigger pass t
+;; Compares each element in a list
+;; If the first number is bigger pass nil, if second number is bigger pass t
 (defun compare-digits (fir-num sec-num pos) ;pos is the current position
-  (let ((nth-fir-num (nth pos fir-num)) (nth-sec-num (nth pos sec-num)))
+  (let ((nth-fir-num (nth pos fir-num))
+	(nth-sec-num (nth pos sec-num)))
     (unless (equal pos (length fir-num))
       (cond ((> nth-fir-num nth-sec-num)
 	     nil)
@@ -47,10 +49,11 @@
 	     (compare-digits fir-num sec-num (+ 1 pos)))))))
 
 
-;;Compares the lengths of the lists and calls compare-digits if they are of
-;;equal length.
+;; Compares the lengths of the lists and calls compare-digits if they are of
+;; equal length.
 (defun compare (fir-num sec-num)
-  (let ((len-fir-num (length fir-num)) (len-sec-num (length sec-num)))
+  (let ((len-fir-num (length fir-num))
+	(len-sec-num (length sec-num)))
     (cond ((> len-fir-num len-sec-num)
 	   nil)
 	  ((< len-fir-num len-sec-num)
@@ -61,9 +64,9 @@
 
 ;;; Multiplication ;;;
 
-;;Adds zeros the front and back of the list being multiplied
-;;This prevents errors like: "NIL is not a number"
-;;The number of zeros added: 2((length y) - 1)
+;; Adds zeros the front and back of the list being multiplied
+;; This prevents errors like: "NIL is not a number"
+;; The number of zeros added: 2((length y) - 1)
 (defun pad-with-zeros (num-list n)	;n is a loop variable
   (cond ((> n 0)
 	 (pad-with-zeros (cons 0 (reverse num-list)) (- n 1)))
@@ -71,14 +74,14 @@
 	 num-list)))
 
 
-;;Actually does the multiplication.
-;;We take number 'x' and pad it with zeros to start.
-;;Then we take number 'y' and reverse it.
-;;Now it takes these and multiples down the line.
-;;For example, x = '(1 2 3) y = '(4 5)
-;;Pad zeros: '(0 1 2 3 0)
-;;Reverse y: '(5 4)
-;;Multiply:
+;; Actually does the multiplication.
+;; We take number 'x' and pad it with zeros to start.
+;; Then we take number 'y' and reverse it.
+;; Now it takes these and multiples down the line.
+;; For example, x = '(1 2 3) y = '(4 5)
+;; Pad zeros: '(0 1 2 3 0)
+;; Reverse y: '(5 4)
+;; Multiply:
 ;;          '(0 1 2 3 0)
 ;;          '(5 4)
 ;;            0 4 <- add these together then added to the *result* list
@@ -95,31 +98,37 @@
 ;;                '(5 4)
 ;;                  15 0
 ;;
-;;In *result* will be '(15 22 13 4) *note that it's backwards
-;;In the next function (multiply) it passes *result* into digit-correct where it is
-;;fixed. This is why it's backwards (because digit-correct needs them backwards)
-;;You then have '(5 3 5 5) in *result*, it gets reversed to have '(5 5 3 5) YAY!
+;; In *result* will be '(15 22 13 4) *note that it's backwards
+;; In the next function (multiply) it passes *result* into digit-correct where it is
+;; fixed. This is why it's backwards (because digit-correct needs them backwards)
+;; You then have '(5 3 5 5) in *result*, it gets reversed to have '(5 5 3 5) YAY!
 
-;;This function multiplies the current digits in position 'n' and adds them into
-;;the temp-buffer, which is then returned back to multiply-loop
+;; This function multiplies the current digits in position 'n' and adds them into
+;; the temp-buffer, which is then returned back to multiply-loop
 (defun multiply-digits (fir-num sec-num n i temp-buffer) ;n is current position, i is a loop variable
   (if (equal i (length sec-num))
       temp-buffer
       (multiply-digits fir-num sec-num (+ 1 n) (+ 1 i) 
-			    (+ temp-buffer (* (nth n fir-num) (nth i sec-num))))))
+		       (+ temp-buffer
+			  (* (nth n fir-num) (nth i sec-num))))))
 
 
-;;This function basically conses the result list with the output from the
-;;multiply-digits function, then calls itself with a new position (n)
+;; This function basically conses the result list with the output from the
+;; multiply-digits function, then calls itself with a new position (n)
 (defun multiply-loop (fir-num sec-num n i)
   (unless (equal n (- (length fir-num) (- (length sec-num) 1)))
-      (cons (multiply-digits fir-num sec-num n 0 0) (multiply-loop fir-num sec-num (+ 1 n) i))))
+    (cons (multiply-digits fir-num sec-num n 0 0)
+	  (multiply-loop fir-num sec-num (+ 1 n) i))))
 
 
 ;;must be called before the multiply-loop function (this is a setup function) 
 (defun multiply (fir-num sec-num)
   (let ((pad-fir-num (pad-with-zeros fir-num (* 2 (- (length sec-num) 1)))))
-    (reverse (digit-fixer (reverse (multiply-loop pad-fir-num (reverse sec-num) 0 (- (length sec-num) 1)))))))
+    (reverse
+     (digit-fixer (reverse
+		   (multiply-loop pad-fir-num
+				  (reverse sec-num) 0
+				  (- (length sec-num) 1)))))))
 
 
 
@@ -173,7 +182,7 @@
   (unless (null fir-num)			;they are null at the same time
     (let ((fir-digit (car fir-num)) (sec-digit (car sec-num)))
       (cons (- fir-digit sec-digit) (subtract-loop (cdr fir-num) (cdr sec-num))))))
-  
+
 (defun subtract (fir-num sec-num)
   (if (equal fir-num sec-num)
       '(0)
@@ -183,6 +192,8 @@
 				 (carry-fix (subtract-loop (reverse fir-num) (reverse pad-sec-num)))))))))
 
 ;;; Division ;;;
+
+;; Ignore the ugly...
 
 ;; This functions brute forces it's way to find the best quotient for the
 ;; current slice of the divisor.
@@ -194,7 +205,7 @@
 	   possible-quo)
 	  (t
 	   (subtract possible-quo '(1))))))
-  
+
 (defun divide-loop (dividend divisor cur-div)
   (unless (null divisor)
     (let ((rest-of-div (cdr divisor)) (no-zero-cur-div (remove-leading-zeros cur-div)))
@@ -203,7 +214,7 @@
 	    (append quotient (divide-loop dividend rest-of-div
 					  (append (subtract no-zero-cur-div (multiply dividend quotient)) (list (cadr divisor))))))
 	  (cons 0 (divide-loop dividend rest-of-div (append no-zero-cur-div (list (cadr divisor)))))))))
-	    
+
 
 (defun divide (dividend divisor)
   (remove-leading-zeros (divide-loop dividend divisor (list (car divisor)))))
