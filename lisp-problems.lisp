@@ -8,7 +8,7 @@
   (let ((reversed-list (reverse list)))
     (list (cadr reversed-list)
 	  (car reversed-list))))
-    
+
 ;; 3
 (defun element-at (list location)
   (if (equal 0 location)
@@ -27,7 +27,7 @@
       rest-of-list
       (reverse-a-list (rest list)
 		      (cons (first list) rest-of-list))))
-      
+
 ;; 6
 (defun palindrome-logic (list reversed-list)
   (if (null list)
@@ -37,14 +37,15 @@
 
 (defun palindrome (list)
   (palindrome-logic list (reverse list)))
-       
+
 ;; 7
 (defun flatten (orig-list)
   (unless (null orig-list)
-    (let ((elem (car orig-list)) (rest-of-list (cdr orig-list)))
+    (let ((elem (car orig-list))
+					(rest-of-list (cdr orig-list)))
       (if (listp elem)
 	  (append (flatten elem) (flatten rest-of-list))
-	  (append (cons elem nil) (flatten rest-of-list))))))
+	  (append `(,elem) (flatten rest-of-list))))))
 
 ;; 8
 (defun compress (orig-list)
@@ -75,7 +76,7 @@
     (let ((elem (car L)))		;elem is a list
       (cons
        (list (length elem) (car elem)) (encode-logic (cdr L))))))
-  
+
 (defun encode (L)
   (encode-logic (pack L)))		;pack is from problem 9
 
@@ -159,7 +160,7 @@
       orig-list
       (rotate-loop (append (cdr orig-list) (list (car orig-list))) (- shift-num 1))))
 
-(defun rotate (orig-list shift-num)	
+(defun rotate (orig-list shift-num)
   (if (< shift-num 0)
       (rotate-loop orig-list (+ (length orig-list) shift-num)) ;rotates to the right
       (rotate-loop orig-list shift-num)))		       ;rotates to the left
@@ -212,7 +213,7 @@
 ;; obviously the size of the groups you want. pos is the current position of
 ;; the list. In our case, '(a) has a position of 0, but '(a b) has a position of
 ;; 1. This is so that we remove a certain element each time as you will see later.
-;; 
+;;
 ;; We check to see if sec is null, this will tell us when we are at the end of a
 ;; element group. For example, if fir = '(a b d), sec = '(), we are dont with the
 ;; '(a b) case. Note that the only way we get '(a b d) is when sec is null AND the
@@ -363,5 +364,5 @@
 		  (goldbach-list (+ fir 1) sec)))
 	  (t
 	   (goldbach-list (+ fir 1) sec)))))
-  
+
 ;; That is all. The rest of the problems I'm not interesting in doing
