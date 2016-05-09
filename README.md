@@ -41,11 +41,11 @@ don't use it.
 ## Langton's Ant
 
 langtons-ant.lisp is a simulation of Langton's Ant, a mathematical problem where
-an ant is located on a board filled with sqaures. You place the ant in any space
+an ant is located on a board filled with squares. You place the ant in any space
 and you can color in any space (you have to do this manually for now). On a
 white space, the ant turns 90 degrees to the right, and moves a space causing
 the white space it was just on to become black. On a black space, the ant turns
-90 degress to the left, and moves a space causing the black space it was just on
+90 degrees to the left, and moves a space causing the black space it was just on
 to become white. The fun part is that you will notice it's very random. Run the
 program for 100,000 steps and view the blacklist. You will notice the ant starts
 to go off in 1 direction (usually diagonally in one of the 4 quadrants). This is
