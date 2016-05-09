@@ -7,7 +7,7 @@
 (defun last-2-in-list (list)
   (let ((reversed-list (reverse list)))
     (list (cadr reversed-list)
-	  (car reversed-list))))
+					(car reversed-list))))
 
 ;; 3
 (defun element-at (list location)
@@ -26,14 +26,14 @@
   (if (null list)
       rest-of-list
       (reverse-a-list (rest list)
-		      (cons (first list) rest-of-list))))
+											(cons (first list) rest-of-list))))
 
 ;; 6
 (defun palindrome-logic (list reversed-list)
   (if (null list)
       t
       (when (equal (car list) (car reversed-list))
-	(palindrome-logic (cdr list) (cdr reversed-list)))))
+				(palindrome-logic (cdr list) (cdr reversed-list)))))
 
 (defun palindrome (list)
   (palindrome-logic list (reverse list)))
@@ -44,31 +44,31 @@
     (let ((elem (car orig-list))
 					(rest-of-list (cdr orig-list)))
       (if (listp elem)
-	  (append (flatten elem) (flatten rest-of-list))
-	  (append `(,elem) (flatten rest-of-list))))))
+					(append (flatten elem) (flatten rest-of-list))
+					(append `(,elem) (flatten rest-of-list))))))
 
 ;; 8
 (defun compress (orig-list)
   (unless (null orig-list)
     (let ((current (car orig-list)) (rest-of-list (cdr orig-list)))
       (if (equal current (car rest-of-list))
-	  (compress rest-of-list)
-	  (append (cons current nil) (compress rest-of-list))))))
+					(compress rest-of-list)
+					(append (cons current nil) (compress rest-of-list))))))
 
 ;; 9
 (defun pack (orig-list)
   (unless (null orig-list)
     (let ((fir-elem (car orig-list)) (sec-elem (cadr orig-list)))
       (cond ((listp fir-elem)
-	     (if (equal (car fir-elem) sec-elem)
-		 (pack (cons
-			(cons sec-elem fir-elem) (cddr orig-list))) ;fir-elem is a list here
-		 (cons fir-elem (pack (cdr orig-list)))))
-	    ((equal fir-elem sec-elem)
-	     (pack (cons
-		    (list fir-elem sec-elem) (cddr orig-list)))) ;jump 2 elements when passing list
-	    (t
-	     (pack (cons (list fir-elem) (cdr orig-list))))))))
+						 (if (equal (car fir-elem) sec-elem)
+								 (pack (cons
+												(cons sec-elem fir-elem) (cddr orig-list))) ;fir-elem is a list here
+								 (cons fir-elem (pack (cdr orig-list)))))
+						((equal fir-elem sec-elem)
+						 (pack (cons
+										(list fir-elem sec-elem) (cddr orig-list)))) ;jump 2 elements when passing list
+						(t
+						 (pack (cons (list fir-elem) (cdr orig-list))))))))
 
 ;; 10
 (defun encode-logic (L)
@@ -85,10 +85,10 @@
   (unless (null L)
     (let ((elem (car L)))
       (let ((len (length elem)))	;2 lexical variables?!?!? Far out!
-	(if (equal 1 len)
-	    (cons (car elem) (encode-mod-logic (cdr L)))
-	    (cons
-	     (list (length elem) (car elem)) (encode-mod-logic (cdr L))))))))
+				(if (equal 1 len)
+						(cons (car elem) (encode-mod-logic (cdr L)))
+						(cons
+						 (list (length elem) (car elem)) (encode-mod-logic (cdr L))))))))
 
 (defun encode-mod (L)
   (encode-mod-logic (pack L)))		;remember pack?
@@ -102,9 +102,9 @@
   (unless (null orig-list)
     (let ((sublist (car orig-list)))
       (if (listp sublist)
-	  (let ((number (car sublist)) (elem (cadr sublist)))
-	    (append (list-maker number elem) (decode (cdr orig-list))))
-	  (append (list sublist) (decode (cdr orig-list))))))) ;sublist isn't a list here
+					(let ((number (car sublist)) (elem (cadr sublist)))
+						(append (list-maker number elem) (decode (cdr orig-list))))
+					(append (list sublist) (decode (cdr orig-list))))))) ;sublist isn't a list here
 
 ;; 13
 (defun count-n-list (element rest-list number-of-elements)
@@ -116,9 +116,9 @@
   (unless (null orig-list)
     (let ((elem (car orig-list)))
       (if (equal elem (cadr orig-list))
-	  (let ((new-list (count-n-list elem (cdr orig-list) 1)))
-	    (cons (car new-list) (encode-direct (cdr new-list))))
-	  (append (list elem) (encode-direct (cdr orig-list)))))))
+					(let ((new-list (count-n-list elem (cdr orig-list) 1)))
+						(cons (car new-list) (encode-direct (cdr new-list))))
+					(append (list elem) (encode-direct (cdr orig-list)))))))
 
 ;; 14
 (defun dupli (L)
@@ -137,8 +137,8 @@
 (defun drop (orig-list pos)
   (let ((elem (car orig-list)) (rest-of-list (cdr orig-list)))
     (if (equal pos 0)
-	rest-of-list
-	(append (list elem) (drop rest-of-list (- pos 1))))))
+				rest-of-list
+				(append (list elem) (drop rest-of-list (- pos 1))))))
 
 ;; 17 (sorta)
 (defun split (orig-list pos)
@@ -149,10 +149,10 @@
 ;; 18
 (defun slice (orig-list I K)		;I & K are the starting & stopping positions, respectively
   (cond ((equal I 0)
-	 (unless (equal K 0)
-	   (cons (car orig-list) (slice (cdr orig-list) 0 (- K 1)))))
-	(t
-	 (slice (cdr orig-list) (- I 1) K))))
+				 (unless (equal K 0)
+					 (cons (car orig-list) (slice (cdr orig-list) 0 (- K 1)))))
+				(t
+				 (slice (cdr orig-list) (- I 1) K))))
 
 ;; 19
 (defun rotate-loop (orig-list shift-num)
@@ -193,7 +193,7 @@
   (unless (equal 0 number-of-elements)
     (let ((rand-pos (random (length orig-list))))
       (cons (element-at orig-list rand-pos)
-	    (rnd-select (remove-at orig-list rand-pos) (- number-of-elements 1))))))
+						(rnd-select (remove-at orig-list rand-pos) (- number-of-elements 1))))))
 
 ;; 24
 (defun lotto-select (N M)		;N & M are the number of numbers and limit of numbers, respectively
@@ -231,17 +231,17 @@
 ;; recursion of next-fir. This is so we can go from fir='(a) to '(b) and repeat.
 (defun combo-loop (fir sec size pos)
   (cond ((null sec)
-	 (when (equal (length fir) size)	;to get the last group
-	     (list fir)))
-	((equal (length fir) size)
-	 (let ((new-fir (append (remove-at fir pos) (list (car sec))))
-	       (new-sec (cdr sec)))
-	   (cons fir (combo-loop new-fir new-sec size pos))))
-	(t
-	 (let ((shift-in-fir (append fir (list (car sec)))) (shift-in-sec (cdr sec)))
-	   (let ((next-fir (remove-at shift-in-fir pos)))
-	     (append (combo-loop shift-in-fir shift-in-sec size (+ pos 1))
-		     (combo-loop next-fir shift-in-sec size pos)))))))
+				 (when (equal (length fir) size)	;to get the last group
+					 (list fir)))
+				((equal (length fir) size)
+				 (let ((new-fir (append (remove-at fir pos) (list (car sec))))
+							 (new-sec (cdr sec)))
+					 (cons fir (combo-loop new-fir new-sec size pos))))
+				(t
+				 (let ((shift-in-fir (append fir (list (car sec)))) (shift-in-sec (cdr sec)))
+					 (let ((next-fir (remove-at shift-in-fir pos)))
+						 (append (combo-loop shift-in-fir shift-in-sec size (+ pos 1))
+										 (combo-loop next-fir shift-in-sec size pos)))))))
 
 (defun combination (group-size org-list)
   (combo-loop (list (car org-list)) (cdr org-list) group-size 0))
@@ -249,11 +249,11 @@
 ;; 31
 (defun prime-loop (number factor)
   (cond ((equal number factor)
-	 t)
-	((equal 0 (mod number factor))
-	 nil)
-	(t
-	 (prime-loop number (+ factor 1)))))
+				 t)
+				((equal 0 (mod number factor))
+				 nil)
+				(t
+				 (prime-loop number (+ factor 1)))))
 
 (defun is-prime (number)
   (prime-loop number 2))
@@ -262,16 +262,16 @@
 (defun gcb-loop (fir-num sec-num cur-divisor g-divisor)
   (let ((new-cur-divisor (+ cur-divisor 1)))
     (cond ((and (equal 0 (mod fir-num cur-divisor)) (equal 0 (mod sec-num cur-divisor)))
-	   (cond ((or (equal fir-num cur-divisor) (equal sec-num cur-divisor))
-		  cur-divisor)
-		 ((> cur-divisor g-divisor)
-		  (gcb-loop fir-num sec-num new-cur-divisor cur-divisor)) ;current divisor becomes the greatest
-		 (t
-		  (gcb-loop fir-num sec-num new-cur-divisor g-divisor))))
-	   ((or (equal fir-num cur-divisor) (equal sec-num cur-divisor))
-	    g-divisor)
-	   (t
-	    (gcb-loop fir-num sec-num new-cur-divisor g-divisor)))))
+					 (cond ((or (equal fir-num cur-divisor) (equal sec-num cur-divisor))
+									cur-divisor)
+								 ((> cur-divisor g-divisor)
+									(gcb-loop fir-num sec-num new-cur-divisor cur-divisor)) ;current divisor becomes the greatest
+								 (t
+									(gcb-loop fir-num sec-num new-cur-divisor g-divisor))))
+					((or (equal fir-num cur-divisor) (equal sec-num cur-divisor))
+					 g-divisor)
+					(t
+					 (gcb-loop fir-num sec-num new-cur-divisor g-divisor)))))
 
 (defun my-gcd (fir-num sec-num)
   (gcb-loop fir-num sec-num 2 1))
@@ -284,11 +284,11 @@
 ;; 34
 (defun phi-loop (m r)
   (cond ((equal m r)
-	 0)
-	((coprime m r)
-	 (1+ (phi-loop m (+ r 1))))
-	(t
-	 (phi-loop m (+ r 1)))))
+				 0)
+				((coprime m r)
+				 (1+ (phi-loop m (+ r 1))))
+				(t
+				 (phi-loop m (+ r 1)))))
 
 (defun totient-phi (m)			;m is the upper limit
   (if (equal 1 m)
@@ -298,12 +298,12 @@
 ;; 35
 (defun prime-factors-loop (number divisor)
   (cond ((is-prime number)
-	 (list number))
-	((equal 0 (mod number divisor))
-	  (let ((new-number (/ number divisor)))
-	    (append (list divisor) (prime-factors-loop new-number 2))))
-	(t
-	 (prime-factors-loop number (+ divisor 1)))))
+				 (list number))
+				((equal 0 (mod number divisor))
+				 (let ((new-number (/ number divisor)))
+					 (append (list divisor) (prime-factors-loop new-number 2))))
+				(t
+				 (prime-factors-loop number (+ divisor 1)))))
 
 (defun prime-factors (number)
   (if (is-prime number)
@@ -321,8 +321,8 @@
   (if (null phi-list)
       1
       (let ((cur-num (car phi-list)) (rest-of-list (cdr phi-list)))
-	(let ((multi (car cur-num)) (prime (cadr cur-num)))
-	  (* (* (- prime 1) (expt prime (- multi 1))) (phi-improved-loop rest-of-list))))))
+				(let ((multi (car cur-num)) (prime (cadr cur-num)))
+					(* (* (- prime 1) (expt prime (- multi 1))) (phi-improved-loop rest-of-list))))))
 
 (defun phi-improved (m)
   (phi-improved-loop (prime-factors-multi m)))
@@ -332,18 +332,18 @@
   (unless (equal lower upper)
     (let ((new-lower (+ lower 1)))
       (if (is-prime lower)
-	  (cons lower (prime-range new-lower upper))
-	  (prime-range new-lower upper)))))
+					(cons lower (prime-range new-lower upper))
+					(prime-range new-lower upper)))))
 
 ;; 40
 (defun goldbach-logic (number fir)	;fir is the first "prime" number
   (cond ((is-prime fir)
-	 (let ((sec (- number fir)))
-	   (if (is-prime sec)
-	       (list fir sec)
-	       (goldbach-logic number (+ fir 1)))))
-	(t
-	 (goldbach-logic number (+ fir 1)))))
+				 (let ((sec (- number fir)))
+					 (if (is-prime sec)
+							 (list fir sec)
+							 (goldbach-logic number (+ fir 1)))))
+				(t
+				 (goldbach-logic number (+ fir 1)))))
 
 (defun goldbach (number)
   (if (evenp number)
@@ -355,14 +355,14 @@
 (defun goldbach-list (fir sec)		;[fir, sec]
   (let ((primes-list (goldbach fir)))
     (cond ((> fir sec)
-	   'done)
-	  ((equal 0 primes-list)
-	   (goldbach-list (+ fir 1) sec))
-	  ((> (car primes-list) 49)
-	   (progn (format t "~d = ~d + ~d" fir (car primes-list) (cadr primes-list))
-		  (fresh-line)
-		  (goldbach-list (+ fir 1) sec)))
-	  (t
-	   (goldbach-list (+ fir 1) sec)))))
+					 'done)
+					((equal 0 primes-list)
+					 (goldbach-list (+ fir 1) sec))
+					((> (car primes-list) 49)
+					 (progn (format t "~d = ~d + ~d" fir (car primes-list) (cadr primes-list))
+									(fresh-line)
+									(goldbach-list (+ fir 1) sec)))
+					(t
+					 (goldbach-list (+ fir 1) sec)))))
 
 ;; That is all. The rest of the problems I'm not interesting in doing

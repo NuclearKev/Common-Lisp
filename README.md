@@ -1,6 +1,6 @@
 # Common-Lisp
 
-## Some of the programs in this repo are not originally written by me. The following were games (or programs) that we taught in the amazing book The Land of Lisp:
+## Land of Lisp Games:
 
 * attack-of-the-robots.lisp
 
@@ -16,10 +16,51 @@
 
 * wumpus.lisp
 
-Also, those programs should be ran using CLISP. Although it only matters with wumpus.lisp, they were written for CLISP and you may run into problems if you don't use it.
+Also, those programs should be ran using CLISP. Although it only matters with
+wumpus.lisp, they were written for CLISP and you may run into problems if you
+don't use it.
 
-langtons-ant.lisp is a simulation of Langton's Ant, a mathematical concept where an ant is located on a board filled with sqaures. You place the ant in any space and you can color in any space (you have to do this manually for now). On a white space, the ant turns 90 degrees to the right, and moves a space causing the white space it was just on to become black. On a black space, the ant turns 90 degress to the left, and moves a space causing the black space it was just on to become white. The fun part is that you will notice it's very random. Run the program for 100,000 steps and view the blacklist. You will notice the ant starts to go off in 1 direction (usually diagonally in one of the 4 quadrants). This is the magic of Langton's Ant. 
+## Langton's Ant
 
-gnuplot-out.lisp is a simple program that will print an ordered pair into a file. This program is meant to be ran in a recursive function within the main program. For example: you put a bunch of points in a list, then call this function ordered pair by ordered pair.
+langtons-ant.lisp is a simulation of Langton's Ant, a mathematical problem where
+an ant is located on a board filled with sqaures. You place the ant in any space
+and you can color in any space (you have to do this manually for now). On a
+white space, the ant turns 90 degrees to the right, and moves a space causing
+the white space it was just on to become black. On a black space, the ant turns
+90 degress to the left, and moves a space causing the black space it was just on
+to become white. The fun part is that you will notice it's very random. Run the
+program for 100,000 steps and view the blacklist. You will notice the ant starts
+to go off in 1 direction (usually diagonally in one of the 4 quadrants). This is
+the magic of Langton's Ant.
 
-big-number.lisp is a program that will do huge factorials (like 1000!). It uses a weird multiplication method that requires all the values to be in lists. Luckily, it is written in LISP, the best listing language! It'll take about 8.7 seconds to do 1000! on an old Dell Latitude. 
+
+## Gnuplot-Out
+
+gnuplot-out.lisp is a simple program that will print an ordered pair into a
+file. This program is meant to be ran in a recursive function within the main
+program. For example: you put a bunch of points in a list, then call this
+function ordered pair by ordered pair.
+
+## Big Number Library
+
+This library is used to do arithmetic on huge numbers (consisting of thousands
+of digits). So far the library can do all basic arithmetic, except for division
+isn't fully functional yet. You can only divide wholly and will not get the
+fractional portion. These functions are being rewritten at the moment.
+
+To see the library in action, I recommend using the factorial program. Put in
+1000! and see the huge number that comes out, accurate to every digit. If that's
+not enough, try 5000!. You may have to wait a while for that one...
+
+## Polynomials
+
+polynomials.lisp was an attempt to create a program that could solve
+polynomials. However, most of the program is a failure as of now. It can factor
+wholly, multiply polynomials, and simplify them.
+
+## Lisp Problems
+
+lisp-problems.lisp is a bunch of problems from a _99 Lisp Problems_ webpage. It
+does, however, contain one of my favorite functions. This function was used to
+solve the combinations problem (it's called combination). Although extremely
+messy, it gets the job done very well.
