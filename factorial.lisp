@@ -2,14 +2,14 @@
 
 ;;This program will take the factorial of any number you give it.
 ;;It stores each digit of the number in a list so that you can deal with huge
-;;numbers. 
-;;In the comments, I use the terms MSD and LSD, which means, Most Significant 
+;;numbers.
+;;In the comments, I use the terms MSD and LSD, which means, Most Significant
 ;;Digit and Least Significant Digit.
 
 ;;There still may be a few changes that I'll add to make this more Lispy, but
 ;;for now, try doing 1000!; it has ~2500 digits in it and is awesome!
 
-(load "/home/kevin/development/lisp/Common-Lisp/big-number.lisp")
+(load "~/common-lisp/big-number.lisp")
 
 ;;Used to increment one of the numbers
 (defun increment(number-list)

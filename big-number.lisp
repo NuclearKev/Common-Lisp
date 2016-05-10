@@ -202,80 +202,69 @@
 
 ;;; Division ;;;
 
-;; These are being rewritten to look better and hopefully have fractional
-;; support.
+;; After one day of hard work, I have what I wanted! Although still ugly, I have
+;; yet to rewrite these for efficiency.
+;; KNOWN BUG: Things with a lot of zeros cause problems
 
-;; This functions brute forces it's way to find the best quotient for the
-;; current slice of the divisor.
-;; (defun find-quotient (dividend current-divisor possible-quo)
-;;   (let ((subtracter (multiply dividend possible-quo)))
-;;     (cond ((compare subtracter current-divisor) ;t when current-divisor is bigger
-;; 					 (find-quotient dividend current-divisor (addition possible-quo '(1))))
-;; 					((equal subtracter current-divisor)
-;; 					 possible-quo)
-;; 					(t
-;; 					 (subtract possible-quo '(1))))))
+;; Used to place the decimal in the end
+(defun insert-at (symbol orig-list pos)	;pos is where placed
+  (if (equal 0 pos)
+      (cons symbol orig-list)
+      (cons (car orig-list) (insert-at symbol (cdr orig-list) (- pos 1)))))
 
-;; (defun divide-loop (dividend divisor cur-div)
-;;   (unless (null divisor)
-;;     (let ((rest-of-div (cdr divisor))
-;; 					(no-zero-cur-div (remove-leading-zeros cur-div)))
-;;       (if (compare dividend no-zero-cur-div)	;t when cur-div is bigger
-;; 					(let ((quotient (find-quotient dividend no-zero-cur-div '(1))))
-;; 						(append quotient (divide-loop dividend rest-of-div
-;; 																					(append (subtract no-zero-cur-div (multiply dividend quotient)) (list (cadr divisor))))))
-;; 					(cons 0 (divide-loop dividend rest-of-div (append no-zero-cur-div (list (cadr divisor)))))))))
-
-
-;; (defun divide (dividend divisor)
-;;   (remove-leading-zeros (divide-loop dividend divisor (list (car divisor)))))
 
 (defun divide-loop (cur-num divisor multiple past-multiple)
 	(let ((cur-guess (multiply divisor multiple)))
 		(cond ((compare cur-guess cur-num)	;is cur-guess is smaller keep going!
 					 (divide-loop cur-num divisor (addition multiple '(1)) multiple))
 					((equal cur-guess cur-num)		;if equal we good!
-					 (append multiple (subtract cur-num cur-guess)))
+					 `(,multiple))
 					(t														;if bigger, go back to the last one
 					 (let ((remainder (subtract cur-num
 																			(multiply divisor past-multiple))))
-						 (if (equal 0 remainder)
-								 `(,past-multiple)
-								 (append past-multiple remainder)))))))
+						 (append past-multiple remainder))))))
 
 ;; Although large, this function is fairly easy to understand.. Thanks cond!
-(defun divide-compare (dividend divisor cur-num i)
-	(cond ((equal 5 i)										;5 decimal places please
-				 nil)
-				((null cur-num)
-				 nil)
+(defun divide-compare (dividend divisor cur-num d i)
+	(cond ((equal d i)										;d # of decimal places please
+				 `(,i))
+				;; ((equal '(0) cur-num)
+				;;  (append '(0)
+				;; 				 (divide-compare (cdr dividend) divisor
+				;; 												 `(,(car dividend)) d i)))
 				((null dividend)								;pad zeros basically
 				 (let* ((div-n-rem (divide-loop cur-num divisor '(1) '(1)))
 								(div (car div-n-rem))
 								(remainder (cadr div-n-rem)))
 					 (if (null remainder)
-							 (cons div
-										 (divide-compare dividend divisor
-																		 '(0) (+ i 1)))
-							 (cons div
-							 			 (divide-compare dividend divisor
-							 											 (cons remainder
-							 														 '(0)) (+ i 1))))))
+							 `(,(car div) ,i)
+					 		 (append `(,div)
+					 		 			 (divide-compare dividend divisor
+					 		 											 (cons remainder
+					 		 														 '(0)) d (+ i 1))))))
 				((compare cur-num divisor)			 ;if cur-num is smaller, get more number
 				 (divide-compare
-					(cdr dividend) divisor (append cur-num `(,(car dividend))) i))
-				(t
+					(cdr dividend) divisor (append cur-num `(,(car dividend))) d i))
+				(t															;if cur-num is bigger, divide!
 				 (let* ((div-n-rem (divide-loop cur-num divisor '(1) '(1)))
 								(div (car div-n-rem))
 								(remainder (cadr div-n-rem)))
 					 (if (null remainder)
-							 (cons div
+							 (append `(,(car div))
 										 (divide-compare (cdr dividend) divisor
-																		 `(,(car dividend)) i))
-							 (cons div
-							 			 (divide-compare (cdr dividend) divisor
-							 											 (cons remainder
-							 														 `(,(car dividend))) i)))))))
+																		 `(,(car dividend)) d i))
+							 (append `(,div)
+										 (divide-compare (cdr dividend) divisor
+																		 (cons remainder
+																					 `(,(car dividend))) d i)))))))
 
-(defun divide (dividend divisor)
-	(divide-compare (cdr dividend) divisor `(,(car dividend)) 0))
+;; You can even choose how many decimal places you want! How wonderful!
+(defun divide (dividend divisor decimal-places)
+	(let* ((no-deci (divide-compare (cdr dividend) divisor `(,(car dividend))
+																	decimal-places -1))
+				 (rev-no-deci (reverse no-deci))
+				 (deci-pos (car rev-no-deci))
+				 (remove-deci-pos (reverse (cdr rev-no-deci))))
+		(if (equal -1 deci-pos)
+				remove-deci-pos
+				(insert-at 'D remove-deci-pos (- (length remove-deci-pos) deci-pos)))))
