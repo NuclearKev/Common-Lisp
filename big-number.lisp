@@ -204,7 +204,6 @@
 
 ;; After one day of hard work, I have what I wanted! Although still ugly, I have
 ;; yet to rewrite these for efficiency.
-;; KNOWN BUG: Things with a lot of zeros cause problems
 
 ;; Used to place the decimal in the end
 (defun insert-at (symbol orig-list pos)	;pos is where placed
@@ -212,7 +211,7 @@
       (cons symbol orig-list)
       (cons (car orig-list) (insert-at symbol (cdr orig-list) (- pos 1)))))
 
-
+;; Does the actual division with remainders
 (defun divide-loop (cur-num divisor multiple past-multiple)
 	(let ((cur-guess (multiply divisor multiple)))
 		(cond ((compare cur-guess cur-num)	;is cur-guess is smaller keep going!
@@ -226,6 +225,10 @@
 
 ;; Although large, this function is fairly easy to understand.. Thanks cond!
 ;; I plan on rewritting this function to look better
+
+;; More or less, this function looks at the current digit in the dividend and
+;; sees if it is big enough to divide, zero, or whatever. It then does the
+;; appropriate logic to correctly divide.
 (defun divide-compare (dividend divisor cur-num d i)
 	(let ((big-or-small (compare cur-num divisor))
 				(is-zero (equal '(0) cur-num)))
@@ -238,7 +241,7 @@
 											(div (car div-n-rem))
 											(remainder (cadr div-n-rem)))
 								 (if (null remainder)
-										 div
+										 (append div `(,(+ i 1)))
 										 (append div
 														 (divide-compare
 															(cdr dividend) divisor
@@ -279,6 +282,8 @@
 																									`(,(car dividend))) d i))))))))
 
 ;; You can even choose how many decimal places you want! How wonderful!
+;; Based on the decimal value and how many decimals were used, it finds were to
+;; put the 'D symbol.
 (defun divide (dividend divisor decimal-places)
 	(let* ((end-dividend (reverse (cons 'E (reverse dividend))))
 				 (no-deci (divide-compare (cdr end-dividend) divisor
