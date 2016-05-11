@@ -222,46 +222,67 @@
 					(t														;if bigger, go back to the last one
 					 (let ((remainder (subtract cur-num
 																			(multiply divisor past-multiple))))
-						 (append past-multiple remainder))))))
+						 (list past-multiple remainder))))))
 
 ;; Although large, this function is fairly easy to understand.. Thanks cond!
+;; I plan on rewritting this function to look better
 (defun divide-compare (dividend divisor cur-num d i)
-	(cond ((equal d i)										;d # of decimal places please
-				 `(,i))
-				;; ((equal '(0) cur-num)
-				;;  (append '(0)
-				;; 				 (divide-compare (cdr dividend) divisor
-				;; 												 `(,(car dividend)) d i)))
-				((null dividend)								;pad zeros basically
-				 (let* ((div-n-rem (divide-loop cur-num divisor '(1) '(1)))
-								(div (car div-n-rem))
-								(remainder (cadr div-n-rem)))
-					 (if (null remainder)
-							 `(,(car div) ,i)
-					 		 (append `(,div)
-					 		 			 (divide-compare dividend divisor
-					 		 											 (cons remainder
-					 		 														 '(0)) d (+ i 1))))))
-				((compare cur-num divisor)			 ;if cur-num is smaller, get more number
-				 (divide-compare
-					(cdr dividend) divisor (append cur-num `(,(car dividend))) d i))
-				(t															;if cur-num is bigger, divide!
-				 (let* ((div-n-rem (divide-loop cur-num divisor '(1) '(1)))
-								(div (car div-n-rem))
-								(remainder (cadr div-n-rem)))
-					 (if (null remainder)
-							 (append `(,(car div))
-										 (divide-compare (cdr dividend) divisor
-																		 `(,(car dividend)) d i))
-							 (append `(,div)
-										 (divide-compare (cdr dividend) divisor
-																		 (cons remainder
-																					 `(,(car dividend))) d i)))))))
+	(let ((big-or-small (compare cur-num divisor))
+				(is-zero (equal '(0) cur-num)))
+		(cond ((equal d i)										;d # of decimal places please
+					 `(,i))
+					((null dividend)								;pad zeros basically
+					 (if big-or-small
+							 (divide-compare dividend divisor (append cur-num '(0)) d i)
+							 (let* ((div-n-rem (divide-loop cur-num divisor '(1) '(1)))
+											(div (car div-n-rem))
+											(remainder (cadr div-n-rem)))
+								 (if (null remainder)
+										 div
+										 (append div
+														 (divide-compare
+															(cdr dividend) divisor
+															(append remainder '(0)) d (+ 1 i)))))))
+					((equal '(E) dividend)					;at the end, but not decimal yet
+					 (cond (is-zero
+									'(0 -1))
+								 (big-or-small
+									(divide-compare dividend divisor (append cur-num '(0)) d i))
+								 (t
+									(let* ((div-n-rem (divide-loop cur-num divisor '(1) '(1)))
+												 (div (car div-n-rem))
+												 (remainder (cadr div-n-rem)))
+										(if (null remainder)
+												(append div '(-1))
+												(append div
+																(divide-compare
+																 (cdr dividend) divisor
+																 (append remainder '(0)) d (+ 1 i))))))))
+					 (is-zero
+						(append '(0)
+										(divide-compare (cdr dividend) divisor
+																		`(,(car dividend)) d i)))
+					 (big-or-small			 ;if cur-num is smaller, get more number
+						(divide-compare
+						 (cdr dividend) divisor (append cur-num `(,(car dividend))) d i))
+					 (t															;if cur-num is bigger, divide!
+						(let* ((div-n-rem (divide-loop cur-num divisor '(1) '(1)))
+									 (div (car div-n-rem))
+									 (remainder (cadr div-n-rem)))
+							(if (null remainder)
+									(append div
+													(divide-compare (cdr dividend) divisor
+																					`(,(car dividend)) d i))
+									(append div
+													(divide-compare (cdr dividend) divisor
+																					(append remainder
+																									`(,(car dividend))) d i))))))))
 
 ;; You can even choose how many decimal places you want! How wonderful!
 (defun divide (dividend divisor decimal-places)
-	(let* ((no-deci (divide-compare (cdr dividend) divisor `(,(car dividend))
-																	decimal-places -1))
+	(let* ((end-dividend (reverse (cons 'E (reverse dividend))))
+				 (no-deci (divide-compare (cdr end-dividend) divisor
+																	`(,(car end-dividend)) decimal-places -1))
 				 (rev-no-deci (reverse no-deci))
 				 (deci-pos (car rev-no-deci))
 				 (remove-deci-pos (reverse (cdr rev-no-deci))))

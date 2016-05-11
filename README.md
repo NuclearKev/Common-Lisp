@@ -3,9 +3,11 @@
 ## Big Number Library
 
 This library is used to do arithmetic on huge numbers (consisting of thousands
-of digits). So far the library can do all basic arithmetic, except for division
-isn't fully functional yet. You can only divide wholly and will not get the
-fractional portion. These functions are being rewritten at the moment.
+of digits). So far the library can do all basic arithmetic. However, you can
+only use whole numbers (natural numbers to be more specific). If you divide two
+whole numbers that give you a fraction, you'll get that fraction in decimal form
+with a 'D (not a string, a symbol) separating the whole part from the fraction
+part. I plan to add fraction support for all functions someday.
 
 To see the library in action, I recommend using the factorial program. Put in
 1000! and see the huge number that comes out, accurate to every digit. If that's
