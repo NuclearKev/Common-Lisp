@@ -15,8 +15,7 @@ whole numbers that give you a fraction, you'll get that fraction in decimal form
 with a 'D (not a string, a symbol) separating the whole part from the fraction
 part. I plan to add fraction support for all functions someday. When using the
 division function, you shouldn't use it for something that will end up with a
-value less than 1. HINT: It won't work. Also, you shouldn't use it for something
-extremely trivial like 5 / 4.
+value less than 1. HINT: It won't work all that great.
 
 To see the library in action, I recommend using the factorial program. Put in
 1000! and see the huge number that comes out, accurate to every digit. If that's
