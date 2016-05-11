@@ -1,5 +1,11 @@
 # Common-Lisp
 
+## Important Note
+
+For some reason GitHub is screwing up my formatting. If you wish to view the
+files with the correct tabbing/spacing, please clone the repo and view them in a
+nice text editor.
+
 ## Big Number Library
 
 This library is used to do arithmetic on huge numbers (consisting of thousands
