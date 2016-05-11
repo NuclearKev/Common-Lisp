@@ -236,7 +236,8 @@
 					 `(,i))
 					((null dividend)								;pad zeros basically
 					 (if big-or-small
-							 (divide-compare dividend divisor (append cur-num '(0)) d i)
+							 (append '(0) (divide-compare
+														 dividend divisor (append cur-num '(0)) d (+ i 1)))
 							 (let* ((div-n-rem (divide-loop cur-num divisor '(1) '(1)))
 											(div (car div-n-rem))
 											(remainder (cadr div-n-rem)))
