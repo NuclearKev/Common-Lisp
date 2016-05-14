@@ -285,7 +285,7 @@
 ;; You can even choose how many decimal places you want! How wonderful!
 ;; Based on the decimal value and how many decimals were used, it finds were to
 ;; put the 'D symbol.
-(defun divide (dividend divisor decimal-places)
+(defun divide (dividend divisor &optional (decimal-places 5))
 	(let* ((end-dividend (reverse (cons 'E (reverse dividend))))
 				 (no-deci (divide-compare (cdr end-dividend) divisor
 																	`(,(car end-dividend)) decimal-places -1))
